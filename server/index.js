@@ -1,7 +1,9 @@
+//node modules
 import path from "path";
 import express from "express";
 import morgan from "morgan";
 
+//project modules
 import db from '../db'
 
 
@@ -10,7 +12,7 @@ const PORT = 8080;
 
 app.use(morgan('dev'))
 
-//body-parsing via express's built in body-parser
+//body-parsing via express's built in body-parser (as of Express 4.16+)
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -35,7 +37,7 @@ if (path.extname(req.path).length) {
 
 // sends index.html
 app.use('*', (req, res) => {
-res.sendFile(path.join(__dirname, '..', 'public/index.html'))
+    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
 })
 
 // error handling endware
