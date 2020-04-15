@@ -1,10 +1,10 @@
 //node modules
-import path from "path";
-import express from "express";
-import morgan from "morgan";
+const path = require('path');
+const express = require("express");
+const morgan = require ("morgan");
 
 //project modules
-import db from '../db'
+const db = require('../db')
 
 
 const app = express();
@@ -18,8 +18,8 @@ app.use(express.urlencoded());
 
 
 // auth and api routes
-app.use('/auth', require('./auth'))
-app.use('/api', require('./api'))
+// app.use('/auth', require('./auth'))
+// app.use('/api', require('./api'))
 
 // static file-serving middleware
 app.use(express.static(path.join(__dirname, '..', 'public')))
@@ -47,13 +47,11 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send(err.message || 'Internal server error.')
 })
 
-const syncDb = () => db.sync()
+//const syncDb = () => db.sync()
 
 const startServer = () => {
-    syncDb()
-    .then(()=> {
-        app.listen(PORT, ()=> console.log("server is listening on PORT:", PORT))
-    })
+    app.listen(PORT, ()=> console.log("server is listening on PORT:", PORT))
+    
 }
 
 startServer();

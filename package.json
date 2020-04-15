@@ -20,7 +20,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
     "test": "react-scripts test",
+    "dev":"run-p start start-server",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,5 +39,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3",
+    "npm-run-all": "^4.1.5",
+    "webpack-cli": "^3.3.11"
   }
 }
