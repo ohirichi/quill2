@@ -8,13 +8,13 @@ const db = require('../db')
 
 
 const app = express();
-const PORT = 8080;
+const port = 4000;
 
 app.use(morgan('dev'))
 
 //body-parsing via express's built in body-parser (as of Express 4.16+)
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 
 // auth and api routes
@@ -22,7 +22,7 @@ app.use(express.urlencoded());
 // app.use('/api', require('./api'))
 
 // static file-serving middleware
-app.use(express.static(path.join(__dirname, '..', 'public')))
+app.use(express.static(path.join(__dirname, '..', 'build', 'public')))
 
 // any remaining requests with an extension (.js, .css, etc.) send 404
 app.use((req, res, next) => {
@@ -37,7 +37,7 @@ if (path.extname(req.path).length) {
 
 // sends index.html
 app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
+    res.sendFile(path.join(__dirname, '..', 'build', 'public/index.html'))
 })
 
 // error handling endware
@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
 //const syncDb = () => db.sync()
 
 const startServer = () => {
-    app.listen(PORT, ()=> console.log("server is listening on PORT:", PORT))
+    app.listen(port, ()=> console.log("server is listening on PORT:", port))
     
 }
 
