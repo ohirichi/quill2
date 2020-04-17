@@ -6,8 +6,11 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "compression": "^1.7.4",
+    "connect-session-sequelize": "^6.1.1",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
+    "passport": "^0.4.1",
     "path": "^0.12.7",
     "pg": "^8.0.2",
     "pg-hstore": "^2.3.3",
@@ -22,7 +25,7 @@
     "build": "react-scripts build",
     "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
     "test": "react-scripts test",
-    "dev":"run-p start start-server",
+    "dev": "run-p start start-server",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

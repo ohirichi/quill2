@@ -2,6 +2,10 @@
 const path = require('path');
 const express = require("express");
 const morgan = require ("morgan");
+const compression = require('compression')
+const session = require('express-session')
+const passport = require('passport')
+const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
 //project modules
 const db = require('../db')
@@ -9,6 +13,23 @@ const db = require('../db')
 
 const app = express();
 const port = 4000;
+const sessionStore = new SequelizeStore({db})
+
+//setting up passport sessions:
+if (process.env.NODE_ENV !== 'production') require('../secrets')
+
+// passport registration
+passport.serializeUser((user, done) => done(null, user.id))
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await db.models.user.findByPk(id)
+    done(null, user)
+  } catch (err) {
+    done(err)
+  }
+})
+
 
 app.use(morgan('dev'))
 
@@ -17,9 +38,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+// compression middleware
+app.use(compression())
+
+// session middleware with passport
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'what should have been is',
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false
+  })
+)
+app.use(passport.initialize())
+app.use(passport.session())
+
 // auth and api routes
-// app.use('/auth', require('./auth'))
-// app.use('/api', require('./api'))
+app.use('/auth', require('./auth'))
+app.use('/api', require('./api'))
 
 // static file-serving middleware
 app.use(express.static(path.join(__dirname, '..', 'build', 'public')))
@@ -47,10 +83,12 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send(err.message || 'Internal server error.')
 })
 
-//const syncDb = () => db.sync()
+const syncDb = () => db.sync()
 
-const startServer = () => {
-    app.listen(port, ()=> console.log("server is listening on PORT:", port))
+const startServer = async function(){
+    await sessionStore.sync()
+    await syncDb()
+    app.listen(port, () => console.log("server is listening on PORT:", port))
     
 }
 
