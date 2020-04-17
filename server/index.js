@@ -15,8 +15,8 @@ const app = express();
 const port = 4000;
 const sessionStore = new SequelizeStore({db})
 
-//setting up passport sessions:
-if (process.env.NODE_ENV !== 'production') require('../secrets')
+
+//if (process.env.NODE_ENV !== 'production') require('../secrets')
 
 // passport registration
 passport.serializeUser((user, done) => done(null, user.id))
