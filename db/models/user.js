@@ -3,6 +3,18 @@ const Sequelize = require('sequelize')
 const db = require('../db')
 
 const User = db.define('user', {
+  username: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false
+  },
+  lastSubmit: {
+    type: Sequelize.DATE
+  },
+  streak: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0
+  },
   email: {
     type: Sequelize.STRING,
     unique: true,
@@ -36,6 +48,13 @@ module.exports = User
  */
 User.prototype.correctPassword = function(candidatePwd) {
   return User.encryptPassword(candidatePwd, this.salt()) === this.password()
+}
+
+User.prototype.updateStreak = function () {
+  console.log('streak initial:', this.streak)
+  this.streak = this.streak + 1;
+  console.log('streak updated to: ', this.streak)
+  return this;
 }
 
 /**
