@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-module.exports = Chapter
 
-const Chapter = Sequelize.define(chapter, {
+
+const Chapter = db.define('chapter', {
    title:{
     type: Sequelize.TEXT,
     allowNull: false
@@ -28,3 +28,5 @@ const Chapter = Sequelize.define(chapter, {
 
 
 })
+
+module.exports = Chapter

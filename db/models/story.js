@@ -1,9 +1,8 @@
 const Sequelize = require('sequelize')
 const db = require('../db')
 
-module.exports = Story
 
-const Story = Sequelize.define(story, {
+const Story = db.define("story", {
    title:{
     type: Sequelize.STRING,
     allowNull: false
@@ -21,3 +20,5 @@ const Story = Sequelize.define(story, {
   }
 
 })
+
+module.exports = Story
