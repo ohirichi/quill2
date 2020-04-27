@@ -1,4 +1,9 @@
 import React, {useState} from 'react';
+import {connect} from 'react-redux'
+import {auth} from '../store'
+
+//#region material ui components import
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,10 +16,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+//#endregion
 
-
-
-
+//#region  Styles
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -34,17 +38,21 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+//#endregion
 
-export default function SignIn() {
+//#region  Component
+function SignIn(props) {
   const [newUser, setNewUser] = useState(false)
   const classes = useStyles();
-  console.log("newUser:", newUser)
 
+  //toggle between form types - sign in vs register
   const switchForms = (e) => {
     e.preventDefault();
-    setNewUser(!!!newUser)
+    setNewUser(!newUser)   
   }
+  //To Do: Form Validation
 
+  //TO DO: Forgot PW?/Remember PW
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -55,7 +63,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           {newUser ? "Register" : "Sign In" }
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit = {(e)=> props.handleSubmit(e, newUser)} className={classes.form} noValidate>
             {newUser ? 
             <TextField
             variant="outlined"
@@ -89,10 +97,10 @@ export default function SignIn() {
             id="password"
             autoComplete="current-password"
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -103,14 +111,14 @@ export default function SignIn() {
             {newUser ? "Sign Up" : "Sign in" }
           </Button>
           <Grid container>
-            <Grid item xs>
+            {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
-            </Grid>
-            <Grid item>
+            </Grid> */}
+            <Grid item xs>
               <Link href="#" onClick={(e)=>switchForms(e)} variant="body2">
-                {newUser ? "Existing user? Sign In" : "Don't have an account? Sign Up" }
+                {newUser ? "Existing user? Sign In" : "New User? Sign Up" }
               </Link>
             </Grid>
           </Grid>
@@ -119,3 +127,29 @@ export default function SignIn() {
     </Container>
   );
 }
+//#endregion
+
+//#region  MapDispatch
+const mapDispatch = dispatch => {
+  return {
+    handleSubmit(e, newUser){
+      e.preventDefault()
+      let method = 'login'
+      const updObj = {}     
+      updObj.email = e.target.email.value
+      updObj.password = e.target.password.value
+      console.log("updObj:", updObj,"newUser:", newUser)
+
+      //USE the /auth reducer after updating it 
+      if(newUser){
+        method = 'signup'
+        updObj.username = e.target.username.value
+          
+      }
+      dispatch(auth(updObj, method))     
+  }
+  }
+}
+//#endregion
+
+export default connect(null, mapDispatch)(SignIn)

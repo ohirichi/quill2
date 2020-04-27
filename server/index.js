@@ -83,7 +83,7 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send(err.message || 'Internal server error.')
 })
 
-const syncDb = () => db.sync()
+const syncDb = () => db.sync({alter:true})
 
 const startServer = async function(){
     await sessionStore.sync()
