@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, Test} from './components'
+import {Login, AddStory, Test} from './components'
 import {me} from './store'
 
 
@@ -29,11 +29,17 @@ const Routes = (props)=> {
             <Route path="/login">
                 <Login/>
             </Route>
+            <Route path="/write">
+                <AddStory/>
+            </Route>
             <Route
             path="/hello"
             render={(props)=>(<div>Hello There</div>)}
             />
             <ProtectedRoute path="/test" isLoggedIn={isLoggedIn} component={Test} />
+            <Route>
+                <Login/>
+            </Route>
         </Switch>
     )
 }
@@ -46,7 +52,8 @@ const mapState = state => {
     return {
       // Being 'logged in' for our purposes will be defined has having a state.user that has a truthy id.
       // Otherwise, state.user will be an empty object, and state.user.id will be falsey
-      isLoggedIn: !!state.user.id
+      isLoggedIn: !!state.user.id,
+      userId: state.user.id
     }
   }
   
