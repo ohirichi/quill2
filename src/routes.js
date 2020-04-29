@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, AddStory, Test} from './components'
+import {Login, AddStory, AddChapter, Test} from './components'
 import {me} from './store'
 
 
@@ -28,6 +28,9 @@ const Routes = (props)=> {
         <Switch>
             <Route path="/login">
                 <Login/>
+            </Route>
+            <Route path="/write/chapter">
+                <AddChapter/>
             </Route>
             <Route path="/write">
                 <AddStory/>
