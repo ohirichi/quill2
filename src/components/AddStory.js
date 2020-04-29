@@ -1,27 +1,26 @@
 import React, {useState} from 'react'
 import {connect} from 'react-redux'
 import axios from 'axios'
-
-//#region  Material UI Component imports
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-//#endregion
+import history from '../history'
+import { makeStyles, Container, ButtonGroup, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
 
 
 //#region Styles
 const useStyles = makeStyles((theme) => ({
-    categories: {
+    inputGroup: {
       display: 'flex',
       flexDirection:'row',
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      alignSelf:'flex-start'
+    },
+    buttonGroup:{
+      display: 'flex',
+      flexDirection:'row',
+      justifyContent:"flex-end"
+    },
+
+    extraMargin:{
+        margin: "0.5rem"
     },
 
     formLabel:{
@@ -48,12 +47,14 @@ const useStyles = makeStyles((theme) => ({
 //it does need to know who the current user is - pass in current userId as a prop
 //#endregion
 
-const AddStory = (props) => {
+export default function AddStory(props){
 
     //#region Form State
+
     const [storyDetails, setStoryDetails] = useState({
         title:'Untitled',
-        description:''
+        description:'',
+        public:true
     })
 
     const [storyCategories, setStoryCategories] = useState({
@@ -71,9 +72,14 @@ const AddStory = (props) => {
 
     const categories = Object.keys(storyCategories)
     const classes = useStyles();
+    
     //#region Input handlers
     const handleDetailsChange = (e)=>{
-        setStoryDetails({...storyDetails, [e.target.name]:e.target.value})
+        let value = e.target.value;
+        if(e.target.name == 'public'){
+            e.target.value == 'true' ? value = true : value = false;
+        }
+        setStoryDetails({...storyDetails, [e.target.name]:value})
     }
 
     const handleCategoryChange = (e) => {
@@ -82,7 +88,24 @@ const AddStory = (props) => {
 
     const handleSubmit = (e)=>{
         e.preventDefault()
+        let storyObj = Object.assign({}, storyDetails)
+        storyObj.category = []
+        for(let key in storyCategories){
+            if(storyCategories[key]){
+                storyObj.category.push(key)
+            }
+        }
 
+        console.log("storyObj:", storyObj, "storyDetails:", storyDetails)
+        axios.post('/api/stories', storyObj)
+        .then(res => console.log("story created successfully! Story Id:", res.data.id))
+        .catch(err => console.log("error:", err))
+
+    }
+
+    const handleCancel = (e) =>{
+        e.preventDefault()
+        history.push('/')
     }
 
     //TO-DO: Validate Form
@@ -93,10 +116,11 @@ const AddStory = (props) => {
     }
     //#endregion
 
-    
-
     return(
-        <Container>
+        <Container maxWidth="sm">
+            <Typography component="h1" variant="h5">
+                Write a New Story
+            </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
                 variant="outlined"
@@ -121,22 +145,43 @@ const AddStory = (props) => {
                 autoFocus
                 value={storyDetails.description}
                 onChange={handleDetailsChange}
-                />               
-                <FormLabel component="legend" className={classes.formLabel}>Category</FormLabel>
-                <FormGroup className={classes.categories}>
-                    {categories.map(category => (
-                        <FormControlLabel
-                        key={category}
-                        control={<Checkbox checked={storyCategories[category]} onChange={handleCategoryChange} name={category} />}
-                        label={category.toUpperCase()}
-                        />
-                    ))}
-                    
-                </FormGroup>
+                />
+                <FormControl
+                component="fieldset"
+                variant="outlined"
+                margin="normal"
+                >
+                    <FormLabel component="legend" className={classes.formLabel}>Category</FormLabel>
+                    <FormGroup className={classes.inputGroup}>
+                        {categories.map(category => (
+                            <FormControlLabel
+                            key={category}
+                            control={<Checkbox checked={storyCategories[category]} onChange={handleCategoryChange} name={category} />}
+                            label={category.toUpperCase()}
+                            />
+                        ))}
+                        
+                    </FormGroup>
+                </FormControl>
+                <FormControl 
+                component="fieldset"
+                variant="outlined"
+                margin="normal"
+                className={classes.inputGroup}
+                >
+                    <FormLabel className={classes.formLabel} component="legend">Story Visibility</FormLabel>
+                    <RadioGroup className={classes.inputGroup} aria-label="public" name="public" value={storyDetails.public} onChange={handleDetailsChange}>
+                        <FormControlLabel value={true} control={<Radio />} label="Public" />
+                        <FormControlLabel value={false} control={<Radio />} label="Private" />
+                    </RadioGroup>
+                </FormControl>
+                <FormControl className={classes.buttonGroup} >
+                    <Button type="submit" className={classes.extraMargin} variant="contained" color="primary">Create</Button>
+                    <Button className={classes.extraMargin} variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
+                </FormControl>             
+                
             </form>
         </Container>
     )
 
 }
-
-export default AddStory
