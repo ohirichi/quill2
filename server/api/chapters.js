@@ -8,7 +8,7 @@ router.get('/:id', (req, res, next) => {
       .then(chapter => res.json(chapter))
       .catch(next)
   })
-//get all chapters for a story id
+
 //update a chapter by id
 router.put('/:id', (req, res, next) => {
     Chapter.findOne({where: {id: req.params.id}})
