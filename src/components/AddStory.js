@@ -32,24 +32,9 @@ const useStyles = makeStyles((theme) => ({
   }));    
 //#endregion
 
-//#region Notes
-//Component for adding a story
-//It should let the user give a title - untitled by default
-//It should let the user pick zero or more genres/categories for the story
-//It should let the user add a description to the story
-//It should let the user create the story with the details as long as mandatory fields have been provided
-//It should let the user cancel creating the story
-
-//Bonus: It should warn the user when navigating away from the page that they will lose data if it hasnt been submitted
-
-//Does this component need to be connected to the global redux state?
-//Component will basically be a form
-//it does need to know who the current user is - pass in current userId as a prop
-//#endregion
-
 export default function AddStory(props){
 
-    //#region Form State
+//#region Form State
 
     const [storyDetails, setStoryDetails] = useState({
         title:'Untitled',
@@ -68,12 +53,12 @@ export default function AddStory(props){
         horror:false,
         sport:false
     })
-    //#endregion
+//#endregion
 
     const categories = Object.keys(storyCategories)
     const classes = useStyles();
     
-    //#region Input handlers
+//#region Input handlers
     const handleDetailsChange = (e)=>{
         let value = e.target.value;
         if(e.target.name == 'public'){
@@ -108,13 +93,13 @@ export default function AddStory(props){
         history.push('/')
     }
 
-    //TO-DO: Validate Form
+//TO-DO: Validate Form
 
     const validateForm = ()=> {
         //to-do
         //return valid or return error
     }
-    //#endregion
+//#endregion
 
     return(
         <Container maxWidth="sm">
@@ -146,11 +131,7 @@ export default function AddStory(props){
                 value={storyDetails.description}
                 onChange={handleDetailsChange}
                 />
-                <FormControl
-                component="fieldset"
-                variant="outlined"
-                margin="normal"
-                >
+                <FormControl component="fieldset" variant="outlined" margin="normal">
                     <FormLabel component="legend" className={classes.formLabel}>Category</FormLabel>
                     <FormGroup className={classes.inputGroup}>
                         {categories.map(category => (
@@ -163,12 +144,7 @@ export default function AddStory(props){
                         
                     </FormGroup>
                 </FormControl>
-                <FormControl 
-                component="fieldset"
-                variant="outlined"
-                margin="normal"
-                className={classes.inputGroup}
-                >
+                <FormControl component="fieldset" variant="outlined" margin="normal"className={classes.inputGroup}>
                     <FormLabel className={classes.formLabel} component="legend">Story Visibility</FormLabel>
                     <RadioGroup className={classes.inputGroup} aria-label="public" name="public" value={storyDetails.public} onChange={handleDetailsChange}>
                         <FormControlLabel value={true} control={<Radio />} label="Public" />

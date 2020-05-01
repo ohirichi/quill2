@@ -19,7 +19,7 @@ export default function Story(props){
             console.log("error:", err)
             history.push("/")
         })
-    },[])
+    },[storyId])
 
     if (story.id){
         console.log("story:", story)
@@ -37,6 +37,6 @@ export default function Story(props){
         )
     }
     else{
-        return (<div>No Story Here! Error?</div>)
+        return (<div>Loading....</div>)
     }
 }

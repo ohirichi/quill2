@@ -25,7 +25,7 @@ router.get('/:id', (req, res, next) => {
 })
 
 router.get('/:id/chapters', (req, res, next) => {
-  Chapter.findAll({where: {storyId: req.params.id}, include: [{all: true}]})
+  Chapter.findAll({where: {storyId: req.params.id}, include: [{all: true}], order:[['createdAt', 'ASC']]})
     .then(stories => res.json(stories))
     .catch(next)
 })
