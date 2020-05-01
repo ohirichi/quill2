@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
+import {connect} from "react-redux"
+import {useParams} from 'react-router-dom'
 import history from '../history'
 
 import {makeStyles, Typography, TextField, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button} from '@material-ui/core'
@@ -24,11 +26,11 @@ const useStyles = makeStyles((theme)=>({
     }
 }))
 
-export default function AddChapter(props){
+function AddChapter(props){
     //constants
     const classes = useStyles()
-    //const {storyId} = props
-    const storyId = 2
+    const {storyId} = useParams()
+    
 
     //#region Form State
     const [chapterDetails, setChapterDetails] = useState({
@@ -128,3 +130,9 @@ export default function AddChapter(props){
 
 
 }
+
+const mapState = (state)=> ({
+    user:state.user
+})
+
+export default connect(mapState)(AddChapter)

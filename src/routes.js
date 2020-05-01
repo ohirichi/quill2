@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, Story, AddStory, AddChapter, ReadChapter, Test} from './components'
+import {Login, Story, AddStory, AddChapter, Chapter, Test} from './components'
 import {me} from './store'
 
 
@@ -26,27 +26,40 @@ const Routes = (props)=> {
   
     return(
         <Switch>
-            <Route path="/login">
+            <Route exact path="/">
+                {/* To Do: Homepage Component */}
                 <Login/>
             </Route>
-            <Route path="/write/chapter">
+            <Route exact path="/read">
+                {/* To Do: All Stories Component */}
+                <div>Reading?</div>
+            </Route>
+            <Route exact path="/read/:storyId/:chapterNumber">
+                <Chapter mode="read"/>
+            </Route>
+            <Route exact path="/read/:storyId">
+                <Story mode="read"/>
+            </Route>
+            <Route exact path="/login">
+                <Login/>
+            </Route>
+            <Route exact path="/write">
+                {/* To Do: Writing Dashboard Component or CTA to Login/Register if no user logged in */}
+            </Route>
+            <Route exact path="/write/new">
+              {/* To Do: Convert to protected route */}
+                <AddStory/>
+            </Route>   
+            <Route exact path="/write/:storyId/addChapter">
+              {/* To Do: Convert to protected route */}
                 <AddChapter/>
             </Route>
-            <Route path="/write">
-                <AddStory/>
+            <Route exact path="/edit/:storyId/:chapterId">
+              {/* To Do: Convert to protected route and add component */} 
             </Route>
-            <Route path="/read/:storyId/:chapterNumber">
-                <ReadChapter/>
+            <Route exact path="/edit/:storyId">
+              {/* To Do: Convert to protected route and add component */} 
             </Route>
-
-            <Route path="/read/:storyId">
-                <Story />
-            </Route>
-            
-            <Route
-            path="/hello"
-            render={(props)=>(<div>Hello There</div>)}
-            />
             <ProtectedRoute path="/test" isLoggedIn={isLoggedIn} component={Test} />
             <Route>
                 <Login/>

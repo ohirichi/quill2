@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
+import {connect} from 'react-redux'
 import history from '../history'
 import {useParams} from 'react-router-dom'
 import { makeStyles, Container, Button, Typography} from '@material-ui/core';
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme)=>({
 
 }))
 
-export default function ReadChapter(props){
+function Chapter(props){
     const classes = useStyles();
     const {storyId, chapterNumber} = useParams()
 
@@ -45,3 +46,7 @@ export default function ReadChapter(props){
         )
     }
 }
+
+const mapState = (state) => ({user:state.user})
+
+export default connect(mapState)(Chapter)

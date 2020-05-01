@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   }));    
 //#endregion
 
-export default function AddStory(props){
+function AddStory(props){
 
 //#region Form State
 
@@ -80,11 +80,16 @@ export default function AddStory(props){
                 storyObj.category.push(key)
             }
         }
-
-        console.log("storyObj:", storyObj, "storyDetails:", storyDetails)
-        axios.post('/api/stories', storyObj)
-        .then(res => console.log("story created successfully! Story Id:", res.data.id))
-        .catch(err => console.log("error:", err))
+        if(props.user.id){
+            storyObj.userId = props.user.id
+            console.log("storyObj:", storyObj, "storyDetails:", storyDetails)
+            axios.post('/api/stories', storyObj)
+            .then(res => history.push(`/read/${res.data.id}`))
+            .catch(err => console.log("error:", err))
+        }
+        else{
+            console.log("Error: you must be logged into write a story")
+        }
 
     }
 
@@ -161,3 +166,7 @@ export default function AddStory(props){
     )
 
 }
+
+const mapState = state => ({user:state.user})
+
+export default connect(mapState)(AddStory)
