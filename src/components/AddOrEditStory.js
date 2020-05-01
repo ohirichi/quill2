@@ -1,5 +1,6 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
+import {useParams} from 'react-router-dom'
 import axios from 'axios'
 import history from '../history'
 import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
@@ -32,17 +33,16 @@ const useStyles = makeStyles((theme) => ({
   }));    
 //#endregion
 
-function AddStory(props){
+function AddOrEditStory(props){
+    let {storyId} = useParams() 
+    console.log("STORYID:", storyId)
+    const {mode} = props
+    if( mode !== "edit"){
+        storyId = null
+    }
 
 //#region Form State
-
-    const [storyDetails, setStoryDetails] = useState({
-        title:'Untitled',
-        description:'',
-        public:true
-    })
-
-    const [storyCategories, setStoryCategories] = useState({
+    const defaultCategories = {
         romance:false,
         historical:false,
         fantasy:false,
@@ -52,10 +52,52 @@ function AddStory(props){
         mystery:false,
         horror:false,
         sport:false
+    }
+    const [state, setState] = useState({
+        story:{},
+        title:'Untitled', 
+        description:'', 
+        public:true, 
+        category:defaultCategories
     })
+
+
+    useEffect(()=>{
+        if(storyId){
+            console.log("storyId b4 axios call:", storyId)
+            axios.get(`/api/stories/${storyId}`)
+            .then(res => {
+                const story = res.data
+                const newState= {}
+                newState.story = story
+                newState.title = story.title
+                newState.description = story.description
+                newState.public = story.public
+
+                const newCats = {
+                    romance:false,
+                    historical:false,
+                    fantasy:false,
+                    sciFi:false,
+                    fiction:false,
+                    adventure:false,
+                    mystery:false,
+                    horror:false,
+                    sport:false
+                }
+                story.category.forEach(cat => {
+                    newCats[cat] = true
+                })
+                newState.category = newCats
+                setState(newState)
+            })
+            .catch(err => console.log("error:", err))
+        }       
+    },[storyId])
+    
 //#endregion
 
-    const categories = Object.keys(storyCategories)
+    const categories = Object.keys(state.category)
     const classes = useStyles();
     
 //#region Input handlers
@@ -64,25 +106,26 @@ function AddStory(props){
         if(e.target.name == 'public'){
             e.target.value == 'true' ? value = true : value = false;
         }
-        setStoryDetails({...storyDetails, [e.target.name]:value})
+        setState({...state, [e.target.name]:value})
     }
 
     const handleCategoryChange = (e) => {
-        setStoryCategories({...storyCategories, [e.target.name]: e.target.checked})
+        let updatedCategories = ({...state.category, [e.target.name]: e.target.checked})
+        setState({...state, category:updatedCategories})
     }
 
     const handleSubmit = (e)=>{
         e.preventDefault()
-        let storyObj = Object.assign({}, storyDetails)
+        let storyObj = Object.assign({}, state)
         storyObj.category = []
-        for(let key in storyCategories){
-            if(storyCategories[key]){
+        for(let key in state.category){
+            if(state.category[key]){
                 storyObj.category.push(key)
             }
         }
         if(props.user.id){
             storyObj.userId = props.user.id
-            console.log("storyObj:", storyObj, "storyDetails:", storyDetails)
+            console.log("storyObj:", storyObj, "state:",state)
             axios.post('/api/stories', storyObj)
             .then(res => history.push(`/read/${res.data.id}`))
             .catch(err => console.log("error:", err))
@@ -121,7 +164,7 @@ function AddStory(props){
                 label="Title"
                 name="title"
                 autoFocus
-                value={storyDetails.title}
+                value={state.title}
                 onChange={handleDetailsChange}
                 />
                 <TextField
@@ -133,17 +176,17 @@ function AddStory(props){
                 label="Description"
                 name="description"
                 autoFocus
-                value={storyDetails.description}
+                value={state.description}
                 onChange={handleDetailsChange}
                 />
                 <FormControl component="fieldset" variant="outlined" margin="normal">
                     <FormLabel component="legend" className={classes.formLabel}>Category</FormLabel>
                     <FormGroup className={classes.inputGroup}>
-                        {categories.map(category => (
+                        {categories.map(currentCategory => (
                             <FormControlLabel
-                            key={category}
-                            control={<Checkbox checked={storyCategories[category]} onChange={handleCategoryChange} name={category} />}
-                            label={category.toUpperCase()}
+                            key={currentCategory}
+                            control={<Checkbox checked={state.category[currentCategory]} onChange={handleCategoryChange} name={currentCategory} />}
+                            label={currentCategory.toUpperCase()}
                             />
                         ))}
                         
@@ -151,7 +194,7 @@ function AddStory(props){
                 </FormControl>
                 <FormControl component="fieldset" variant="outlined" margin="normal"className={classes.inputGroup}>
                     <FormLabel className={classes.formLabel} component="legend">Story Visibility</FormLabel>
-                    <RadioGroup className={classes.inputGroup} aria-label="public" name="public" value={storyDetails.public} onChange={handleDetailsChange}>
+                    <RadioGroup className={classes.inputGroup} aria-label="public" name="public" value={state.public} onChange={handleDetailsChange}>
                         <FormControlLabel value={true} control={<Radio />} label="Public" />
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
