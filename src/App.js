@@ -1,13 +1,14 @@
 import React from 'react';
 import './App.css';
-
-import {Login} from './components/index';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import {Navbar} from './components/index';
 import Routes from './routes'
 
 function App() {
   return (
     <div className="App">
-      <p>Hello</p>
+      <CssBaseline />
+      <Navbar />
       <Routes/>
     </div>
   );

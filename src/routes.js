@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, Story, AddorEditStory, AddChapter, Chapter, Test} from './components'
+import {Login, Story, AddOrEditStory, AddChapter, Chapter, Test} from './components'
 import {me} from './store'
 
 
@@ -48,7 +48,7 @@ const Routes = (props)=> {
             </Route>
             <Route exact path="/write/new">
               {/* To Do: Convert to protected route */}
-                <AddorEditStory mode="add"/>
+                <AddOrEditStory mode="add"/>
             </Route>   
             <Route exact path="/write/:storyId/addChapter">
               {/* To Do: Convert to protected route */}

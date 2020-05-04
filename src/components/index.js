@@ -1,8 +1,8 @@
 import React from "react";
 
-
+export {default as Navbar} from './Navbar'
 export {default as Login} from "./Login";
-export {default as AddorEditStory} from "./AddOrEditStory";
+export {default as AddOrEditStory} from "./AddOrEditStory";
 export {default as AddChapter} from "./AddChapter"
 export {default as Story} from "./Story"
 export {default as Chapter} from "./Chapter"

@@ -212,4 +212,4 @@ function AddOrEditStory(props){
 
 const mapState = state => ({user:state.user})
 
-export default connect(mapState)(AddStory)
+export default connect(mapState)(AddOrEditStory)
