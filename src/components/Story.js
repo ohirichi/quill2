@@ -3,9 +3,47 @@ import {connect} from 'react-redux'
 import axios from 'axios'
 import history from '../history'
 import {useParams} from 'react-router-dom'
-import { makeStyles, Container, Button, Typography, ListItem, List, ListItemText } from '@material-ui/core';
+import { makeStyles, Avatar, Container, Divider, Button, Chip, Typography, ListItem, List, ListItemText, Card } from '@material-ui/core';
 
 const useStyles = makeStyles((theme)=>({
+    root:{
+        padding:0,
+        backgroundColor:'rgba(248, 235, 235, 0.95)'
+    },
+    storyDetails:{
+        backgroundColor:'rgba(248, 235, 235, 0.95)',
+        width:'100%',
+        minHeight:'40vh',
+        margin:0,
+        paddingTop:theme.spacing(4),
+        paddingBottom: theme.spacing(4),
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'center',
+        alignItems:'center',
+        '& *':{
+            margin:theme.spacing(1)
+        }
+
+    },
+    avatar:{
+        backgroundColor:'rgb(250, 172, 172)',
+        margin:'auto 1em'
+    },
+
+    list:{
+        minHeight:'50vh'
+    },
+    cardHolder:{
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        minHeight:'50vh'
+    },
+    card:{
+        
+        padding:theme.spacing(4)
+    }
 
 }))
 
@@ -28,17 +66,25 @@ function Story(props){
     if (story.id){
         console.log("story:", story)
         return(
-            <Container>
-               <Typography>{story.title}</Typography>
-               <Typography>{story.description}</Typography>
-               {isAuthor? <div>Edit Story Details</div>: null}
-               <List>
-                   <ListItem button component="a" href="/">
-                       <ListItemText>Chapter 1</ListItemText>
-                       {isAuthor ? <div>Edit Chapter</div>:null}
-                   </ListItem>
-               </List>
-
+            <Container maxWidth="false" className={classes.root}>
+                <section className={classes.storyDetails} >
+                    <Typography variant="h4">{story.title}</Typography>
+                    <Typography variant= "subtitle2">{story.user? "Written by: " + story.user.username : "Author Unknown"}</Typography>
+                    <Typography variant="body2">{story.description}</Typography>
+                    {isAuthor? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}`} >Edit Details</Button>: null}
+                </section>
+               <Divider variant="middle" />
+               {story.chapters.length ? 
+               <List className={classes.list} >
+               {story.chapters.map((chapter, index) => 
+                   (<ListItem button component="a" href={`/read/${story.id}/${index}`}>
+                       <Avatar className={classes.avatar} >{chapter.title.charAt(0)}</Avatar>
+                      <ListItemText key={chapter.title} >Chapter{index + 1 }: {chapter.title}</ListItemText>
+                      {isAuthor ? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}/${index}`} >Edit Chapter</Button>:null}
+                   </ListItem>))}  
+              </List>
+               : 
+               <div className={classes.cardHolder}><Card className={classes.card} >Currently there are no chapters published for this story</Card></div>}
             </Container>
         )
     }

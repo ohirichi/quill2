@@ -34,7 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
+    "start-server": "nodemon server -e html,js,scss --ignore public --ignore src",
     "test": "react-scripts test",
     "dev": "run-p start start-server",
     "eject": "react-scripts eject"

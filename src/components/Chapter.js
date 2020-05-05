@@ -35,8 +35,8 @@ function Chapter(props){
                 <div>chapters.length: {chapters.length} , currentChapNum: {currentChapter} </div>
                 <Typography>{chapters[currentChapter].title}</Typography>
                 <Typography>{chapters[currentChapter].content} </Typography>
-                <Button>Prev</Button>
-                <Button>Next</Button>
+                <Button disabled={Boolean(currentChapter == 0)} href={`/read/${storyId}/${Number(currentChapter) - 1}`} >Prev</Button>
+                <Button disabled={Boolean(currentChapter == chapters.length - 1)} href={`/read/${storyId}/${Number(currentChapter) + 1}`} >Next</Button>
             </Container>
         )
     }
