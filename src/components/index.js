@@ -6,6 +6,7 @@ export {default as AddOrEditStory} from "./AddOrEditStory";
 export {default as AddOrEditChapter} from "./AddOrEditChapter"
 export {default as Story} from "./Story"
 export {default as Chapter} from "./Chapter"
+export {default as StoryList} from "./StoryList"
 
 export function Test (props){
     return(<div>
