@@ -3,13 +3,26 @@ import axios from 'axios'
 import {connect} from 'react-redux'
 import history from '../history'
 import {useParams} from 'react-router-dom'
-import { makeStyles, Container, Button, Typography} from '@material-ui/core';
+import { makeStyles, Container, Divider, Button, Typography} from '@material-ui/core';
 
 //baseUrl/:storyId/:chapterNumber
 //this component should get all chapters for a given story and sort them by chapterNumber ascending and keep it in an array on state
 //the currentChapter it should display is :chapterNumber
 
 const useStyles = makeStyles((theme)=>({
+    root:{
+        paddingTop:theme.spacing(4),
+        paddingBottom: theme.spacing(2)
+    },
+    extraMargin:{
+        margin:theme.spacing(2)
+    },
+    text:{
+        margin:theme.spacing(2),
+        whiteSpace:'pre-wrap'
+    }
+
+
 
 }))
 
@@ -19,6 +32,10 @@ function Chapter(props){
 
     const [currentChapter, setCurrentChapter] = useState(chapterNumber)
     const [chapters, setChapters] = useState([])
+    let isAuthor = false
+    if(chapters.length){
+        isAuthor = Boolean(chapters[0].story.userId && chapters[0].story.userId == props.user.id )
+    }
 
     useEffect(()=>{
         axios.get(`/api/stories/${storyId}/chapters`)
@@ -31,12 +48,13 @@ function Chapter(props){
 
     if(chapters.length){
         return(
-            <Container>
-                <div>chapters.length: {chapters.length} , currentChapNum: {currentChapter} </div>
-                <Typography>{chapters[currentChapter].title}</Typography>
-                <Typography>{chapters[currentChapter].content} </Typography>
-                <Button disabled={Boolean(currentChapter == 0)} href={`/read/${storyId}/${Number(currentChapter) - 1}`} >Prev</Button>
-                <Button disabled={Boolean(currentChapter == chapters.length - 1)} href={`/read/${storyId}/${Number(currentChapter) + 1}`} >Next</Button>
+            <Container className={classes.root} >
+                <Typography className={classes.extraMargin} variant="h4">{chapters[currentChapter].title}</Typography>
+                {isAuthor ? <Button className={classes.extraMargin} variant="outlined" color="secondary" href={`/edit/${storyId}/${chapterNumber}`}>Edit Chapter</Button>:null}
+                <Divider variant="middle" />
+                <Typography variant="body1" align="left" paragraph className={classes.text}>{chapters[currentChapter].content} </Typography>
+                <Button variant="outlined" disabled={Boolean(currentChapter == 0)} href={`/read/${storyId}/${Number(currentChapter) - 1}`} >Prev</Button>
+                <Button variant="outlined" disabled={Boolean(currentChapter == chapters.length - 1)} href={`/read/${storyId}/${Number(currentChapter) + 1}`} >Next</Button>
             </Container>
         )
     }
