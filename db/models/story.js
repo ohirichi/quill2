@@ -8,7 +8,7 @@ const Story = db.define("story", {
     allowNull: false
    },
    description:{
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(500),
     allowNull: false
    },
    category: {

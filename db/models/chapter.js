@@ -5,11 +5,11 @@ const db = require('../db')
 
 const Chapter = db.define('chapter', {
    title:{
-    type: Sequelize.TEXT,
+    type: Sequelize.STRING,
     allowNull: false
    },
    content:{
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: false
    },
    public: {

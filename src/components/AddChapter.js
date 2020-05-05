@@ -60,7 +60,7 @@ function AddChapter(props){
             let chapterId = res.data.id
             console.log("success from server - new chap added:", res.data)
             if(chapterId){
-                history.push('/')
+                history.push(`/read/${storyId}`)
             }
             else throw new Error("No ChapterId")
         }

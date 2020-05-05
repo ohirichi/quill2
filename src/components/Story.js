@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import axios from 'axios'
 import history from '../history'
 import {useParams} from 'react-router-dom'
-import { makeStyles, Avatar, Container, Divider, Button, Chip, Typography, ListItem, List, ListItemText, Card } from '@material-ui/core';
+import { makeStyles, Fab, ButtonGroup, Avatar, Container, Divider, Button, Chip, Typography, ListItem, List, ListItemText, Card } from '@material-ui/core';
+import {Add} from '@material-ui/icons'
 
 const useStyles = makeStyles((theme)=>({
     root:{
@@ -43,6 +44,12 @@ const useStyles = makeStyles((theme)=>({
     card:{
         
         padding:theme.spacing(4)
+    },
+
+    buttonGroup:{
+        '& *': {
+            margin:0
+        }
     }
 
 }))
@@ -71,7 +78,10 @@ function Story(props){
                     <Typography variant="h4">{story.title}</Typography>
                     <Typography variant= "subtitle2">{story.user? "Written by: " + story.user.username : "Author Unknown"}</Typography>
                     <Typography variant="body2">{story.description}</Typography>
-                    {isAuthor? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}`} >Edit Details</Button>: null}
+                    {isAuthor? <ButtonGroup className={classes.buttonGroup} variant="contained" size="medium" color="secondary">
+                        <Button  href={`/edit/${storyId}`} >Edit Details</Button>
+                        <Button  href={`/write/${storyId}/addChapter`} >Add Chapter</Button>
+                    </ButtonGroup> : null}
                 </section>
                <Divider variant="middle" />
                {story.chapters.length ? 
@@ -85,6 +95,10 @@ function Story(props){
               </List>
                : 
                <div className={classes.cardHolder}><Card className={classes.card} >Currently there are no chapters published for this story</Card></div>}
+               {/* {isAuthor ?  
+                <Fab className={classes.fab} color="secondary" aria-label="add" href={`/write/${storyId}/addChapter`} >
+                    <Add/>
+                </Fab> : null} */}
             </Container>
         )
     }

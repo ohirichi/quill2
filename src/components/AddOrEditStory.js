@@ -8,6 +8,10 @@ import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioG
 
 //#region Styles
 const useStyles = makeStyles((theme) => ({
+    root:{
+        paddingTop: theme.spacing(4)
+    },
+
     inputGroup: {
       display: 'flex',
       flexDirection:'row',
@@ -126,9 +130,17 @@ function AddOrEditStory(props){
         if(props.user.id){
             storyObj.userId = props.user.id
             console.log("storyObj:", storyObj, "state:",state)
-            axios.post('/api/stories', storyObj)
-            .then(res => history.push(`/read/${res.data.id}`))
-            .catch(err => console.log("error:", err))
+            if(mode == "edit"){
+                axios.put(`/api/stories/${storyId}`, storyObj)
+                .then(res => history.push(`/read/${res.data.id}`))
+                .catch(err => console.log("error:", err))
+            }
+            else{
+                axios.post('/api/stories', storyObj)
+                .then(res => history.push(`/read/${res.data.id}`))
+                .catch(err => console.log("error:", err))
+            }
+            
         }
         else{
             console.log("Error: you must be logged into write a story")
@@ -150,9 +162,9 @@ function AddOrEditStory(props){
 //#endregion
 
     return(
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" className ={classes.root} >
             <Typography component="h1" variant="h5">
-                Write a New Story
+                {mode == "edit" ? "Edit Story Details": "Write a New Story"}
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
@@ -168,6 +180,10 @@ function AddOrEditStory(props){
                 onChange={handleDetailsChange}
                 />
                 <TextField
+                multiline
+                rowsMax="3"
+                helperText={`${state.description.length}/500 characters`}
+                error={state.description.length > 500}
                 variant="outlined"
                 margin="normal"
                 required
@@ -200,7 +216,7 @@ function AddOrEditStory(props){
                     </RadioGroup>
                 </FormControl>
                 <FormControl className={classes.buttonGroup} >
-                    <Button type="submit" className={classes.extraMargin} variant="contained" color="primary">Create</Button>
+                    <Button type="submit" className={classes.extraMargin} variant="contained" color="primary">Save</Button>
                     <Button className={classes.extraMargin} variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>
                 </FormControl>             
                 
