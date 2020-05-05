@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme)=>({
         '& *': {
             margin:0
         }
+    },
+    chip:{
+        margin:theme.spacing(1)
     }
 
 }))
@@ -87,9 +90,10 @@ function Story(props){
                {story.chapters.length ? 
                <List className={classes.list} >
                {story.chapters.sort((a,b)=> {return a.id - b.id}).map((chapter, index) => 
-                   (<ListItem button component="a" href={`/read/${story.id}/${index}`}>
+                   (<ListItem button disabled={!isAuthor && chapter.public == false} component="a" href={`/read/${story.id}/${index}`}>
                        <Avatar className={classes.avatar} >{chapter.title.charAt(0)}</Avatar>
                       <ListItemText key={chapter.title} >Chapter {index + 1 }: {chapter.title}</ListItemText>
+                      {chapter.public == false ?<Chip label="Private Chapter" className={classes.chip} size="small" variant="outlined" /> :null}
                       {isAuthor ? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}/${index}`} >Edit Chapter</Button>:null}
                    </ListItem>))}  
               </List>
