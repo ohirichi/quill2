@@ -5,6 +5,8 @@ import axios from 'axios'
 import history from '../history'
 import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
 
+import {Login} from "./index"
+
 
 //#region Styles
 const useStyles = makeStyles((theme) => ({
@@ -160,8 +162,18 @@ function AddOrEditStory(props){
         //return valid or return error
     }
 //#endregion
-
-    return(
+    if(! props.user.id){
+        return(
+            <Container maxWidth="sm" className ={classes.root}>
+                <Typography component="h1" variant="h5">
+                You must be logged in write or edit stories!
+                </Typography>
+                <Login/>
+            </Container>
+            
+        )
+    }
+    else  return(
         <Container maxWidth="sm" className ={classes.root} >
             <Typography component="h1" variant="h5">
                 {mode == "edit" ? "Edit Story Details": "Write a New Story"}
