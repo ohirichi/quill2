@@ -1,12 +1,17 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import {connect} from "react-redux"
 import {useParams} from 'react-router-dom'
 import history from '../history'
+import {Login} from './index'
 
 import {makeStyles, Typography, TextField, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button} from '@material-ui/core'
 
 const useStyles = makeStyles((theme)=>({
+    root:{
+        paddingTop: theme.spacing(4)
+    }
+    ,
     flexRow:{
         display:"flex",
         flexDirection:"row",
@@ -26,18 +31,41 @@ const useStyles = makeStyles((theme)=>({
     }
 }))
 
-function AddChapter(props){
+function AddOrEditChapter(props){
     //constants
     const classes = useStyles()
-    const {storyId} = useParams()
+    let {storyId, chapterNum} = useParams()
+    const {mode} = props
+    if (mode !== "edit"){
+        chapterNum = null
+    }
     
 
     //#region Form State
     const [chapterDetails, setChapterDetails] = useState({
+        id:null,
         title:'Untitled',
         public:true,
         content:''
     })
+
+    useEffect(()=>{
+        if(chapterNum){
+            axios.get(`/api/stories/${storyId}/chapters/${chapterNum}`)
+            .then(res => {
+                const chapDetailsObj = {
+                    id: res.data.id,
+                    title:res.data.title,
+                    public: res.data.public,
+                    content: res.data.content
+                }
+                setChapterDetails(chapDetailsObj)
+            })
+            .catch(err => console.log("error: ", err))
+        }
+    },[chapterNum])
+
+
     //#endregion
 
     //#region  Input and Submit Handlers
@@ -55,18 +83,35 @@ function AddChapter(props){
         let chapterObj = Object.assign({},chapterDetails)
         chapterObj.storyId = storyId
         console.log("submit clicked! chapterObj:", chapterObj)
-        try{
-            let res = await axios.post('/api/chapters',chapterObj)
-            let chapterId = res.data.id
-            console.log("success from server - new chap added:", res.data)
-            if(chapterId){
-                history.push(`/read/${storyId}`)
+        if(mode !== "edit"){
+            try{
+                let res = await axios.post('/api/chapters',chapterObj)
+                let chapterId = res.data.id
+                console.log("success from server - new chap added:", res.data)
+                if(chapterId){
+                    history.push(`/read/${storyId}`)
+                }
+                else throw new Error("No ChapterId")
             }
-            else throw new Error("No ChapterId")
+            catch(err){
+                console.log("error:", err)
+            }
         }
-        catch(err){
-            console.log("error:", err)
+        else{
+            try{
+                let res = await axios.put(`/api/chapters/${chapterDetails.id}`,chapterObj)
+                let chapterId = res.data.id
+                console.log("success from server - chapter updated:", res.data)
+                if(chapterId){
+                    history.push(`/read/${storyId}`)
+                }
+                else throw new Error("No ChapterId")
+            }
+            catch(err){
+                console.log("error:", err)
+            } 
         }
+        
 
     }
 
@@ -75,11 +120,21 @@ function AddChapter(props){
         history.push('/')
     }
     //#endregion
-
-    return(
-        <Container>
-            <Typography>
-                Add New Chapter
+    if(! props.user.id){
+        return(
+            <Container maxWidth="sm" className ={classes.root}>
+                <Typography component="h1" variant="h5">
+                You must be logged in write or edit stories!
+                </Typography>
+                <Login/>
+            </Container>
+            
+        )
+    }
+    else return(
+        <Container className={classes.root} >
+            <Typography variant="h6">
+                {mode == "edit" ? "Edit Chapter" :"Add New Chapter"}
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
@@ -135,4 +190,4 @@ const mapState = (state)=> ({
     user:state.user
 })
 
-export default connect(mapState)(AddChapter)
+export default connect(mapState)(AddOrEditChapter)

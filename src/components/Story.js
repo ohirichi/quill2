@@ -86,10 +86,10 @@ function Story(props){
                <Divider variant="middle" />
                {story.chapters.length ? 
                <List className={classes.list} >
-               {story.chapters.map((chapter, index) => 
+               {story.chapters.sort((a,b)=> {return a.id - b.id}).map((chapter, index) => 
                    (<ListItem button component="a" href={`/read/${story.id}/${index}`}>
                        <Avatar className={classes.avatar} >{chapter.title.charAt(0)}</Avatar>
-                      <ListItemText key={chapter.title} >Chapter{index + 1 }: {chapter.title}</ListItemText>
+                      <ListItemText key={chapter.title} >Chapter {index + 1 }: {chapter.title}</ListItemText>
                       {isAuthor ? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}/${index}`} >Edit Chapter</Button>:null}
                    </ListItem>))}  
               </List>
