@@ -64,7 +64,8 @@ function AddOrEditStory(props){
         title:'Untitled', 
         description:'', 
         public:true, 
-        category:defaultCategories
+        category:defaultCategories,
+        imgUrl:'https://source.unsplash.com/random'
     })
 
 
@@ -75,10 +76,9 @@ function AddOrEditStory(props){
             .then(res => {
                 const story = res.data
                 const newState= {}
-                newState.story = story
-                newState.title = story.title
-                newState.description = story.description
-                newState.public = story.public
+                for(let key in story){
+                    newState[key] = story[key]
+                }
 
                 const newCats = {
                     romance:false,
@@ -220,6 +220,15 @@ function AddOrEditStory(props){
                         
                     </FormGroup>
                 </FormControl>
+                <TextField
+                name="imgUrl"
+                value={state.imgUrl}
+                label="Cover Image URL"
+                variant="outlined"
+                margin="dense"
+                fullWidth
+                onChange={handleDetailsChange}
+                 />
                 <FormControl component="fieldset" variant="outlined" margin="normal"className={classes.inputGroup}>
                     <FormLabel className={classes.formLabel} component="legend">Story Visibility</FormLabel>
                     <RadioGroup className={classes.inputGroup} aria-label="public" name="public" value={state.public} onChange={handleDetailsChange}>

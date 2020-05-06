@@ -63,7 +63,7 @@ function AddOrEditChapter(props){
             })
             .catch(err => console.log("error: ", err))
         }
-    },[chapterNum])
+    },[chapterNum, storyId])
 
 
     //#endregion

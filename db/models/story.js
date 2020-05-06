@@ -17,6 +17,9 @@ const Story = db.define("story", {
   public: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
+  },
+  imgUrl:{
+    type:Sequelize.STRING,
   }
 
 })
