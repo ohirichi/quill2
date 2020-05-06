@@ -53,9 +53,22 @@ function StoryList(props){
     //#region Input Handlers
     const handleChange = (e)=>{
         e.preventDefault()
-        let filteredStories = allStories.slice()
-        if(e.target.name == "category" && e.target.value !== "all"){
-           filteredStories = filteredStories.filter(story => story.category.includes(e.target.value))
+        let stories = allStories.slice()
+        let filteredStories = stories
+        let searchStr = state.search
+        let filter
+        e.target.name == "category" ? filter = e.target.value : filter = state.category
+        
+        if(filter !== "all"){           
+            filteredStories = stories.filter(story => story.category.includes(filter)) 
+        }
+        if(e.target.name =="search"){
+            searchStr = e.target.value   
+        }
+        //Regex matching between search terms and story.title
+        if(searchStr.length){
+            let re = new RegExp(searchStr,'i')
+            filteredStories = filteredStories.filter(story => re.test(story.title))
         }
         setState({...state, selectedStories:filteredStories, [e.target.name]:e.target.value})
     }
@@ -65,6 +78,13 @@ function StoryList(props){
     console.log("state:", state, "allStories:", allStories)
     return(
         <Container>
+            <TextField
+            name="search"
+            label="Search"
+            helperText="Search by Title for a Story"
+            value={state.search}
+            onChange={handleChange}
+            />
             <TextField
             label="Category"
             select
