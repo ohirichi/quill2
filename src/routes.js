@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, Story, StoryList, AddOrEditStory, AddOrEditChapter, Chapter, Test} from './components'
+import {Login, Story, Read, AddOrEditStory, AddOrEditChapter, Chapter, Test} from './components'
 import {me} from './store'
 
 
@@ -32,7 +32,7 @@ const Routes = (props)=> {
             </Route>
             <Route exact path="/read">
                 {/* To Do: All Stories Component */}
-                <StoryList />
+                <Read />
             </Route>
             <Route exact path="/read/:storyId/:chapterNumber">
                 <Chapter mode="read"/>
