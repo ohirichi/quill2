@@ -73,7 +73,7 @@ function Story(props){
 
     console.log("user:", props.user, "story:", story)
 
-    if (story.id){
+    if (story.id && (story.public || isAuthor)){
         console.log("story:", story)
         return(
             <Container maxWidth="false" className={classes.root}>
@@ -107,7 +107,9 @@ function Story(props){
         )
     }
     else{
-        return (<div>Loading....</div>)
+        let message 
+        story.id ? message = "Sorry, this story is not currently Public" : message = 'Loading...'
+        return (<div>{message}</div>)
     }
 }
 

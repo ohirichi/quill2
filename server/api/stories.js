@@ -11,6 +11,15 @@ router.get('/', (req, res, next) => {
     .catch(next)
 })
 
+router.get('/author/:userId', (req,res,next) =>{
+  Story.findAll({
+    where:{userId:req.params.userId},
+    include: [{all: true}]
+  })
+  .then(stories => res.json(stories))
+  .catch(next)
+})
+
 router.post('/', (req, res, next) => {
   Story.create(req.body)
     .then(story => Story.findOne({where: {id: story.id}, include:[{all:true}]}))

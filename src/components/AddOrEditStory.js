@@ -65,7 +65,7 @@ function AddOrEditStory(props){
         description:'', 
         public:true, 
         category:defaultCategories,
-        imgUrl:'https://source.unsplash.com/random'
+        imgUrl:''
     })
 
 

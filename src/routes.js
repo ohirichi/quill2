@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
-import {Login, Story, Read, AddOrEditStory, AddOrEditChapter, Chapter, Test} from './components'
+import {Login, Story, Write, Read, AddOrEditStory, AddOrEditChapter, Chapter, Test} from './components'
 import {me} from './store'
 
 
@@ -45,6 +45,7 @@ const Routes = (props)=> {
             </Route>
             <Route exact path="/write">
                 {/* To Do: Writing Dashboard Component or CTA to Login/Register if no user logged in */}
+                <Write />
             </Route>
             <Route exact path="/write/new">
               {/* To Do: Convert to protected route */}

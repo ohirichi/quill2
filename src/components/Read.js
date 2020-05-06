@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import axios from 'axios'
-import { makeStyles, Container, Divider, CardHeader, Avatar, Typography, TextField, MenuItem, Card, CardMedia, CardContent, CardActionArea } from '@material-ui/core';
+import { makeStyles, Container, Divider, Typography, TextField, MenuItem} from '@material-ui/core';
 
 import {StoryList} from "./index"
 
