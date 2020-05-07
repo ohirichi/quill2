@@ -1,12 +1,35 @@
 import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
 import axios from 'axios'
-import { makeStyles, Container, Divider, Typography, TextField, MenuItem} from '@material-ui/core';
+import { makeStyles, Container, Card, Button, Divider, Typography, TextField, MenuItem} from '@material-ui/core';
 
 import {Login, StoryList} from "./index"
 
 //#region Styles
 const useStyles = makeStyles(theme => ({
+    root:{
+        paddingTop:theme.spacing(2),
+    },
+    heading:{
+        marginBottom: theme.spacing(2),
+        minHeight:"30vh",
+        display:"flex",
+        flexDirection:"column",
+        justifyContent:"center",
+        alignItems: "center",
+        '& h2':{
+            margin: theme.spacing(3)
+        },
+        '& a':{
+            marginTop: theme.spacing(2)
+        }
+
+    },
+
+    editStories:{
+        margin:theme.spacing(2),
+        paddingTop: theme.spacing(1)
+    }
 
 }))
 //#endregion
@@ -31,16 +54,25 @@ function Write(props){
 
     if(!props.user.id){
         return (
-            <Container>
-                <Typography>You must be logged into write a story. Sign in or Register Below:</Typography>
+            <Container className={classes.root}>
+                <Typography variant="h4">You must be logged into write a story. Sign in or Register Below:</Typography>
                 <Login />
             </Container>
         )
     }
     else return(
         <Container className={classes.root} >
-            {userStories.length ? <StoryList stories={userStories}/>: "You have not written any stories yet!" }
-
+            <section className={classes.heading} >
+                <Typography className={classes.title} variant="h2">Write Your Story</Typography>
+                <Typography variant="body2">Rule one, you have to write. If you don't write, nothing will happen</Typography>
+                <Typography variant="caption">-Neil Gaiman</Typography>
+                <Button href="/write/new" className={classes.cta} variant="contained" color="primary" >Write New Story</Button>
+            </section>
+            <Divider variant="middle"/>
+            <section className={classes.editStories}>
+                <Typography variant="h5" align="left">Continue Writing A Story</Typography>
+                {userStories.length ? <StoryList stories={userStories}/>: <Card className={classes.card}>"You have not written any stories yet!"</Card> }
+            </section>
         </Container>
     )
 
