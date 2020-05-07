@@ -9,6 +9,7 @@ export {default as Chapter} from "./Chapter"
 export {default as Read} from "./Read"
 export {default as StoryList} from "./StoryList"
 export {default as Write} from "./Write"
+export {default as Footer} from "./Footer"
 
 export function Test (props){
     return(<div>

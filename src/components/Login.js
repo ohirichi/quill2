@@ -20,8 +20,10 @@ import Container from '@material-ui/core/Container';
 
 //#region  Styles
 const useStyles = makeStyles((theme) => ({
+
   paper: {
     marginTop: theme.spacing(8),
+    marginBottom:theme.spacing(4),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
