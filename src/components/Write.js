@@ -28,7 +28,14 @@ const useStyles = makeStyles(theme => ({
 
     editStories:{
         margin:theme.spacing(2),
-        paddingTop: theme.spacing(1)
+        paddingTop: theme.spacing(1),
+        display:"flex",
+        flexDirection:"column",
+    },
+    card:{
+        maxWidth:"300px",
+        padding:theme.spacing(4),
+        alignSelf:"center"
     }
 
 }))
@@ -72,7 +79,7 @@ function Write(props){
             <Divider variant="middle"/>
             <section className={classes.editStories}>
                 <Typography variant="h5" align="left">Continue Writing A Story</Typography>
-                {userStories.length ? <StoryList stories={userStories}/>: <Card className={classes.card}>"You have not written any stories yet!"</Card> }
+                {userStories.length ? <StoryList stories={userStories}/>: <Card className={classes.card}>You have not written any stories yet!</Card> }
             </section>
         </Container>
     )

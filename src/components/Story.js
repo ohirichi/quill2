@@ -93,7 +93,7 @@ function Story(props){
                    (<ListItem button disabled={!isAuthor && chapter.public == false} component="a" href={`/read/${story.id}/${index}`}>
                        <Avatar className={classes.avatar} >{chapter.title.charAt(0)}</Avatar>
                       <ListItemText key={chapter.title} >Chapter {index + 1 }: {chapter.title}</ListItemText>
-                      {chapter.public == false ?<Chip label="Private Chapter" className={classes.chip} size="small" variant="outlined" /> :null}
+                      {chapter.public == false ?<Chip label="Private" className={classes.chip} size="small" variant="outlined" /> :null}
                       {isAuthor ? <Button variant="outlined" size="small" color="secondary" href={`/edit/${storyId}/${index}`} >Edit Chapter</Button>:null}
                    </ListItem>))}  
               </List>
