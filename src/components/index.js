@@ -11,11 +11,4 @@ export {default as StoryList} from "./StoryList"
 export {default as Write} from "./Write"
 export {default as Footer} from "./Footer"
 
-export function Test (props){
-    return(<div>
-        <p>Test</p>
-        {Object.keys(props).map(prop => console.log("prop:", prop))}
-
-    </div>)
-}
 

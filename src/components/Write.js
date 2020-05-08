@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import {connect} from 'react-redux'
+import {Link} from "react-router-dom"
 import axios from 'axios'
-import { makeStyles, Container, Card, Button, Divider, Typography, TextField, MenuItem} from '@material-ui/core';
+import { makeStyles, Container, Card, Button, Divider, Typography} from '@material-ui/core';
 
 import {Login, StoryList} from "./index"
 
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent:"center",
         alignItems: "center",
         '& h2':{
-            margin: theme.spacing(3)
+            marginTop: theme.spacing(2)
         },
         '& a':{
             marginTop: theme.spacing(2)
@@ -27,7 +28,8 @@ const useStyles = makeStyles(theme => ({
     },
 
     editStories:{
-        margin:theme.spacing(2),
+        marginTop:theme.spacing(2),
+        marginBottom:theme.spacing(2),
         paddingTop: theme.spacing(1),
         display:"flex",
         flexDirection:"column",
@@ -53,10 +55,10 @@ function Write(props){
     const [userStories, setUserStories] = useState([])
     useEffect(()=>{
         if(user.id){
-            axios.get(`/api/stories/author/${props.user.id}`)
+            axios.get(`/api/stories/author/${user.id}`)
             .then(res => setUserStories(res.data))
         }       
-    },[props.user.id])
+    },[user.id])
 
     //#endregion
 
@@ -74,7 +76,7 @@ function Write(props){
                 <Typography className={classes.title} variant="h2">Write Your Story</Typography>
                 <Typography variant="body2">Rule one, you have to write. If you don't write, nothing will happen</Typography>
                 <Typography variant="caption">-Neil Gaiman</Typography>
-                <Button href="/write/new" className={classes.cta} variant="contained" color="primary" >Write New Story</Button>
+                <Button component={Link} to="/write/new" className={classes.cta} variant="contained" color="primary" >Write New Story</Button>
             </section>
             <Divider variant="middle"/>
             <section className={classes.editStories}>

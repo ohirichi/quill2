@@ -9,16 +9,20 @@ import {StoryList} from "./index"
 const useStyles = makeStyles(theme =>({
     root:{
         paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4)
+        paddingBottom: theme.spacing(4),
     },
     input:{
         margin:theme.spacing(1)
     },
     featured:{
-        margin:theme.spacing(2),
-        marginBottom: theme.spacing(4)
+        padding:0,
+        margin:0,
+        marginTop:theme.spacing(2),
+        marginBottom: theme.spacing(4),
     },
     browse:{
+        padding:0,
+        margin:0,
         paddingTop:theme.spacing(2)
         
     },
@@ -58,7 +62,6 @@ function Read(props){
     useEffect(()=>{
         axios.get('/api/stories')
         .then(res => {
-            console.log("AllStories from server:", res.data)
             setAllStories(res.data)
         })
         .catch(err => console.log("error:", err))
@@ -81,12 +84,12 @@ function Read(props){
         let filteredStories = stories
         let searchStr = state.search
         let filter
-        e.target.name == "category" ? filter = e.target.value : filter = state.category
+        e.target.name === "category" ? filter = e.target.value : filter = state.category
         
         if(filter !== "all"){           
             filteredStories = stories.filter(story => story.category.includes(filter)) 
         }
-        if(e.target.name =="search"){
+        if(e.target.name ==="search"){
             searchStr = e.target.value   
         }
         //Regex matching between search terms and story.title
@@ -99,7 +102,6 @@ function Read(props){
     //#endregion
 
     //#region Render
-    console.log("state:", state, "allStories:", allStories)
     return(
         <Container className={classes.root} >
             <Typography className={classes.title} variant="h2">Discover A New Story</Typography>
@@ -150,8 +152,6 @@ function Read(props){
                 </TextField>
                 <StoryList stories={state.selectedStories} />
             </section>
-            
-            
         </Container>
     )
 

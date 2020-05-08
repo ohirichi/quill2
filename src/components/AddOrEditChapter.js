@@ -36,7 +36,7 @@ function AddOrEditChapter(props){
     //constants
     const classes = useStyles()
     let {storyId, chapterNum} = useParams()
-    const {mode} = props
+    const {mode, user} = props
     if (mode !== "edit"){
         chapterNum = null
     }
@@ -50,6 +50,17 @@ function AddOrEditChapter(props){
         show:true
     })
     
+    //Author
+    const [isAuthor, setIsAuthor] = useState(true)
+    useEffect(()=>{
+        axios.get(`/api/stories/${storyId}`)
+        .then(res => res.data)
+        .then(story => {
+            let authorId = story.userId
+            setIsAuthor(Boolean(authorId === user.id))
+        })
+    },[storyId, user.id])
+
     //chapter Details
     const [chapterDetails, setChapterDetails] = useState({
         id:null,
@@ -85,8 +96,8 @@ function AddOrEditChapter(props){
     const handleChange = function(e){
         e.preventDefault()
         let value = e.target.value
-        if(e.target.name == 'public'){
-            e.target.value == 'true' ? value = true : value = false
+        if(e.target.name === 'public'){
+            e.target.value === 'true' ? value = true : value = false
         }
         setChapterDetails({...chapterDetails, [e.target.name]:value})
     }
@@ -114,12 +125,10 @@ function AddOrEditChapter(props){
         else{
             let chapterObj = Object.assign({},chapterDetails)
             chapterObj.storyId = storyId
-            console.log("submit clicked! chapterObj:", chapterObj)
             if(mode !== "edit"){
                 try{
                     let res = await axios.post('/api/chapters',chapterObj)
                     let chapterId = res.data.id
-                    console.log("success from server - new chap added:", res.data)
                     if(chapterId){
                         history.push(`/read/${storyId}`)
                     }
@@ -137,7 +146,6 @@ function AddOrEditChapter(props){
                 try{
                     let res = await axios.put(`/api/chapters/${chapterDetails.id}`,chapterObj)
                     let chapterId = res.data.id
-                    console.log("success from server - chapter updated:", res.data)
                     if(chapterId){
                         history.push(`/read/${storyId}`)
                     }
@@ -152,9 +160,6 @@ function AddOrEditChapter(props){
                 } 
             }
         }
-        
-        
-
     }
 
     const handleCancel = (e) =>{
@@ -166,21 +171,22 @@ function AddOrEditChapter(props){
         history.push(urlStr)
     }
     //#endregion
-    if(! props.user.id){
+    if(! props.user.id || !isAuthor){
+        let message = "You must be logged in write or edit chapters!"
+        if (!isAuthor) message = "You do not have permission to edit this chapter"
         return(
             <Container maxWidth="sm" className ={classes.root}>
                 <Typography component="h1" variant="h5">
-                You must be logged in write or edit stories!
+                {message}
                 </Typography>
-                <Login/>
-            </Container>
-            
+                {isAuthor ? <Login/> : null}
+            </Container>          
         )
     }
     else return(
         <Container className={classes.root} >
             <Typography variant="h6">
-                {mode == "edit" ? "Edit Chapter" :"Add New Chapter"}
+                {mode === "edit" ? "Edit Chapter" :"Add New Chapter"}
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField

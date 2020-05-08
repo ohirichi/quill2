@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import axios from 'axios'
 import history from '../history'
-import { makeStyles, Container, Button, Typography, TextField, FormLabel, FormHelperText, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
+import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
 import {Alert} from "@material-ui/lab"
 
 import {Login} from "./index"
@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 
 function AddOrEditStory(props){
     let {storyId} = useParams() 
-    console.log("STORYID:", storyId)
     const {mode, user} = props
     if( mode !== "edit"){
         storyId = null
@@ -74,7 +73,7 @@ function AddOrEditStory(props){
         errorMessage:"",
         show:true
     })
-
+    //get existing story details if editing a story
     useEffect(()=>{
         if(storyId){
             axios.get(`/api/stories/${storyId}`)
@@ -110,12 +109,14 @@ function AddOrEditStory(props){
 
     const categories = Object.keys(state.category)
     const classes = useStyles();
+    let isAuthor = true
+    if(state.story && state.story.id && state.story.userId !== user.id) isAuthor = false
     
 //#region Input handlers
     const handleDetailsChange = (e)=>{
         let value = e.target.value;
-        if(e.target.name == 'public'){
-            e.target.value == 'true' ? value = true : value = false;
+        if(e.target.name === 'public'){
+            e.target.value === 'true' ? value = true : value = false;
         }
         setState({...state, [e.target.name]:value})
     }
@@ -137,14 +138,11 @@ function AddOrEditStory(props){
 
     const handleSubmit = (e)=>{
         e.preventDefault()
-        console.log("handleSubmit")
         let validSubmission = validateForm()
         if(!validSubmission){
-            console.log("validate form failed")
             setError({error:true, errorMessage:"Please correct the errors on the form before resubmitting", show:true})
         }
         else{
-            console.log("validate form passed")
             let storyObj = Object.assign({}, state)
             storyObj.category = []
             for(let key in state.category){
@@ -154,8 +152,7 @@ function AddOrEditStory(props){
             }
             if(user.id){
                 storyObj.userId = props.user.id
-                console.log("storyObj:", storyObj, "state:",state)
-                if(mode == "edit"){
+                if(mode === "edit"){
                     axios.put(`/api/stories/${storyId}`, storyObj)
                     .then(res => history.push(`/read/${res.data.id}`))
                     .catch(err => setError({error:err, errorMessage:"Something went wrong please try again", show:true}))
@@ -183,11 +180,14 @@ function AddOrEditStory(props){
     }
 
 //#endregion
-    if(!user.id){
+    //checking that user is logged in and is the author of the story to edit it
+    if(!user.id || !isAuthor){
+        let message = "You must be logged in write or edit stories!"
+        if (!isAuthor) message = "You do not have permission to edit this story"
         return(
             <Container maxWidth="sm" className ={classes.root}>
                 <Typography component="h1" variant="h5">
-                You must be logged in write or edit stories!
+                {message}
                 </Typography>
                 <Login/>
             </Container>
@@ -198,7 +198,7 @@ function AddOrEditStory(props){
         <Container maxWidth="sm" className ={classes.root} >
             
             <Typography component="h1" variant="h5">
-                {mode == "edit" ? "Edit Story Details": "Write a New Story"}
+                {mode === "edit" ? "Edit Story Details": "Write a New Story"}
             </Typography>
             <form onSubmit={handleSubmit} >
                 <TextField

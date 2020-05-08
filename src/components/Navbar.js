@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import { makeStyles, AppBar,Toolbar, Button, Menu, MenuItem, IconButton, Typography, Link  } from '@material-ui/core'
+import{Link as RouterLink} from "react-router-dom"
+import {makeStyles, AppBar,Toolbar, Menu, MenuItem, IconButton, Link} from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
 import {connect} from 'react-redux'
 import {logout} from '../store'
@@ -46,7 +47,6 @@ const Navbar = ({handleClick, isLoggedIn}) => {
   
   
   const handleMenu = (event) => {
-    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 
@@ -64,10 +64,10 @@ const Navbar = ({handleClick, isLoggedIn}) => {
   <div>
   <AppBar position="fixed">
     <Toolbar className={classes.root}>
-      <Link className={classes.logo} href="/" variant="h6" underline="none">Quill</Link>
+      <Link component={RouterLink} className={classes.logo} to="/" variant="h6" underline="none">Quill</Link>
       <nav className={classes.root}>
-        <Link className={classes.link} underline="none"  href="/read">READ</Link>
-        <Link className={classes.link} underline="none" href="/write">WRITE</Link>
+        <Link component={RouterLink} className={classes.link} underline="none"  to="/read">READ</Link>
+        <Link component={RouterLink} className={classes.link} underline="none" to="/write">WRITE</Link>
         {isLoggedIn ?  
         <div>
             <IconButton
@@ -99,7 +99,7 @@ const Navbar = ({handleClick, isLoggedIn}) => {
               <MenuItem  onClick={handleClick}>LOG OUT</MenuItem>
             </Menu>
         </div>
-        : <Link className={classes.link}  underline="none" href="/login">LOGIN</Link>}
+        : <Link component={RouterLink} className={classes.link}  underline="none" to="/login">LOGIN</Link>}
       </nav>   
     </Toolbar>
   </AppBar>

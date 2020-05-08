@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {auth} from '../store'
 
 //#region material ui components import
-import {makeStyles, Avatar, Button, TextField, Link, Grid, Typography, Container, FormControl, FormHelperText} from '@material-ui/core'
+import {makeStyles, Avatar, Button, TextField, Link, Grid, Typography, Container, FormHelperText} from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 //#endregion
@@ -145,7 +145,6 @@ const mapDispatch = dispatch => {
       const updObj = {}     
       updObj.email = e.target.email.value
       updObj.password = e.target.password.value
-      console.log("updObj:", updObj,"newUser:", newUser)
 
       //USE the /auth reducer after updating it 
       if(newUser){

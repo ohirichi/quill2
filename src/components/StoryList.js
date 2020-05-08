@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from "react-router-dom"
 import { makeStyles, Container,  CardHeader, Card, CardMedia, CardActionArea } from '@material-ui/core';
 
 //#region  Styles
@@ -9,7 +10,8 @@ const useStyles = makeStyles(theme =>({
         flexDirection:"row",
         flexWrap:"wrap",
         justifyContent:"center",
-        alignItems:"center"
+        alignItems:"center",
+        padding:0
     },
     title:{
         paddingBottom: theme.spacing(2)
@@ -20,7 +22,7 @@ const useStyles = makeStyles(theme =>({
     },
     card:{
         margin: theme.spacing(1),
-        width: 300
+        width: 250
 
     }
 }))
@@ -32,11 +34,11 @@ export default function StoryList(props){
  const classes = useStyles()
 
  return(
-    <Container className={classes.storySection}>
+    <Container maxWidth={false} className={classes.storySection}>
     {stories.map(story=>(
             <Card  className={classes.card} key={story.id}  >
                 <CardActionArea 
-                href={`/read/${story.id}`} component="a" 
+                to={`/read/${story.id}`} component={Link} 
                 title={story.title}
                 >
                     <CardHeader 

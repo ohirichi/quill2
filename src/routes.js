@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {connect} from 'react-redux'
-import {withRouter, Route, Switch, Redirect} from 'react-router-dom'
+import {withRouter, Route, Switch} from 'react-router-dom'
 import {Login, Story, Write, Read, AddOrEditStory, AddOrEditChapter, Chapter, Test} from './components'
 import {me} from './store'
 
@@ -22,8 +22,11 @@ const ProtectedRoute = ({component:Component, auth, ...restOfProps}) =>{
 //#region Routes Component
 
 const Routes = (props)=> {
-    const {isLoggedIn} = props
-    useEffect(() => props.loadInitialData())
+    const {isLoggedIn, loadInitialData} = props
+    useEffect(() => {
+      loadInitialData()
+      // eslint-disable-next-line 
+    },[])
     return(
         <Switch>
             <Route exact path="/">
@@ -63,7 +66,6 @@ const Routes = (props)=> {
               {/* To Do: Convert to protected route and add component */} 
               <AddOrEditStory mode="edit"/>
             </Route>
-            <ProtectedRoute path="/test" isLoggedIn={isLoggedIn} component={Test} />
             <Route>
                 <Login/>
             </Route>
