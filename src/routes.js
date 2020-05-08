@@ -7,11 +7,12 @@ import {me} from './store'
 
 //#region ProtectedRoute Component
 
-const ProtectedRoute = ({component:Component, isLoggedIn, ...restOfProps}) =>{
+const ProtectedRoute = ({component:Component, auth, ...restOfProps}) =>{
+  console.log("auth:" , auth)
     return(
         <Route
           render={ routeProps => (
-            isLoggedIn ? <Component {...routeProps}{...restOfProps}/>:<Redirect to="/login"/>)}
+            auth ? <Component {...routeProps}{...restOfProps}/>:<Login />)}
         />        
     )
 }
@@ -23,12 +24,11 @@ const ProtectedRoute = ({component:Component, isLoggedIn, ...restOfProps}) =>{
 const Routes = (props)=> {
     const {isLoggedIn} = props
     useEffect(() => props.loadInitialData())
-  
     return(
         <Switch>
             <Route exact path="/">
                 {/* To Do: Homepage Component */}
-                <Login/>
+                <Read/>
             </Route>
             <Route exact path="/read">
                 {/* To Do: All Stories Component */}

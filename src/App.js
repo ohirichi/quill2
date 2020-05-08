@@ -8,9 +8,11 @@ function App() {
   return (
     <div className="App">
       <CssBaseline />
-      <Navbar className="navbar" />
-      <Routes className="content" />
-      <Footer className="footer" />
+      <Navbar />
+      <Routes />
+      <div className="footer">
+        <Footer  />
+      </div>
     </div>
   );
 }

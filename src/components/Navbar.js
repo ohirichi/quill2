@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles, AppBar,Toolbar, Button, Menu, MenuItem, IconButton, Typography, Link  } from '@material-ui/core'
 import {AccountCircle} from '@material-ui/icons'
 import {connect} from 'react-redux'
 import {logout} from '../store'
-import { relative } from 'path'
+
 
 const useStyles = makeStyles((theme)=>({
   root:{
@@ -11,7 +11,9 @@ const useStyles = makeStyles((theme)=>({
     flexDirection:"row",
     justifyContent: "space-between"
   },
+
   offset:theme.mixins.toolbar,
+
   link:{
     color:"white",
     margin: theme.spacing(0.5),
@@ -41,32 +43,39 @@ const useStyles = makeStyles((theme)=>({
 const Navbar = ({handleClick, isLoggedIn}) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  
   
   const handleMenu = (event) => {
+    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  //to resolve issue of menu auto opening when user logs in:
+  useEffect(()=>{
+    setAnchorEl(null)
+  },[isLoggedIn])
+  
   
   return (
   <div>
-  <AppBar>
+  <AppBar position="fixed">
     <Toolbar className={classes.root}>
       <Link className={classes.logo} href="/" variant="h6" underline="none">Quill</Link>
       <nav className={classes.root}>
-      <Link className={classes.link} underline="none"  href="/read">READ</Link>
-      <Link className={classes.link} underline="none" href="/write">WRITE</Link>
+        <Link className={classes.link} underline="none"  href="/read">READ</Link>
+        <Link className={classes.link} underline="none" href="/write">WRITE</Link>
         {isLoggedIn ?  
         <div>
             <IconButton
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={handleMenu}
               color="inherit"
+              onClick={handleMenu}
               className={classes.icon}
             >
               <AccountCircle />
@@ -83,19 +92,16 @@ const Navbar = ({handleClick, isLoggedIn}) => {
                 vertical: 'top',
                 horizontal: 'right',
               }}
-              open={open}
+              open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <Link href="/dashboard" color="inherit" underline="none"><MenuItem>DASHBOARD</MenuItem></Link>
-              <MenuItem onClick={handleClick}>LOG OUT</MenuItem>
+              {/* <Link href="/dashboard" color="inherit" underline="none"><MenuItem>DASHBOARD</MenuItem></Link> */}
+              <MenuItem  onClick={handleClick}>LOG OUT</MenuItem>
             </Menu>
         </div>
-        : <Link className={classes.link} underline="none" href="/login">LOGIN</Link>}
-      </nav>
-      
-      
+        : <Link className={classes.link}  underline="none" href="/login">LOGIN</Link>}
+      </nav>   
     </Toolbar>
-
   </AppBar>
   <div className={classes.offset} />
   </div>

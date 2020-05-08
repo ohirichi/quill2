@@ -39,12 +39,13 @@ function Write(props){
 
     //#region Constants
     const classes = useStyles()
+    const {user} = props
     //#endregion
 
     //#region Component State
     const [userStories, setUserStories] = useState([])
     useEffect(()=>{
-        if(props.user.id){
+        if(user.id){
             axios.get(`/api/stories/author/${props.user.id}`)
             .then(res => setUserStories(res.data))
         }       
@@ -52,7 +53,7 @@ function Write(props){
 
     //#endregion
 
-    if(!props.user.id){
+    if(!user.id){
         return (
             <Container className={classes.root}>
                 <Typography variant="h4">You must be logged into write a story. Sign in or Register Below:</Typography>
@@ -60,7 +61,7 @@ function Write(props){
             </Container>
         )
     }
-    else return(
+    return(
         <Container className={classes.root} >
             <section className={classes.heading} >
                 <Typography className={classes.title} variant="h2">Write Your Story</Typography>

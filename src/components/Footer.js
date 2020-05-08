@@ -24,7 +24,7 @@ export default function Footer(props){
 
     return(
         <footer className={classes.footer}>
-            <Typography>Coded by <a className={classes.a} href="https://github.com/ohirichi">ohirichi</a> | 2020 </Typography>
+            <Typography variant="caption">Coded by <a className={classes.a} href="https://github.com/ohirichi">ohirichi</a> | 2020 </Typography>
         </footer>
     )
 }

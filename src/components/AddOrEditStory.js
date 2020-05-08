@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import axios from 'axios'
 import history from '../history'
-import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
+import { makeStyles, Container, Button, Typography, TextField, FormLabel, FormHelperText, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
+import {Alert} from "@material-ui/lab"
 
 import {Login} from "./index"
 
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 function AddOrEditStory(props){
     let {storyId} = useParams() 
     console.log("STORYID:", storyId)
-    const {mode} = props
+    const {mode, user} = props
     if( mode !== "edit"){
         storyId = null
     }
@@ -68,10 +69,14 @@ function AddOrEditStory(props){
         imgUrl:''
     })
 
+    const [err, setError] = useState({
+        error:false,
+        errorMessage:"",
+        show:true
+    })
 
     useEffect(()=>{
         if(storyId){
-            console.log("storyId b4 axios call:", storyId)
             axios.get(`/api/stories/${storyId}`)
             .then(res => {
                 const story = res.data
@@ -97,7 +102,7 @@ function AddOrEditStory(props){
                 newState.category = newCats
                 setState(newState)
             })
-            .catch(err => console.log("error:", err))
+            .catch(err => setError({error: true, errorMessage:err}))
         }       
     },[storyId])
     
@@ -120,49 +125,65 @@ function AddOrEditStory(props){
         setState({...state, category:updatedCategories})
     }
 
+    function validateForm (){
+        if(state.title.length > 255 || !state.title.length){
+            return false
+        }
+        if(state.description.length > 500 || !state.description.length){
+            return false
+        }
+        return true
+    }
+
     const handleSubmit = (e)=>{
         e.preventDefault()
-        let storyObj = Object.assign({}, state)
-        storyObj.category = []
-        for(let key in state.category){
-            if(state.category[key]){
-                storyObj.category.push(key)
-            }
-        }
-        if(props.user.id){
-            storyObj.userId = props.user.id
-            console.log("storyObj:", storyObj, "state:",state)
-            if(mode == "edit"){
-                axios.put(`/api/stories/${storyId}`, storyObj)
-                .then(res => history.push(`/read/${res.data.id}`))
-                .catch(err => console.log("error:", err))
-            }
-            else{
-                axios.post('/api/stories', storyObj)
-                .then(res => history.push(`/read/${res.data.id}`))
-                .catch(err => console.log("error:", err))
-            }
-            
+        console.log("handleSubmit")
+        let validSubmission = validateForm()
+        if(!validSubmission){
+            console.log("validate form failed")
+            setError({error:true, errorMessage:"Please correct the errors on the form before resubmitting", show:true})
         }
         else{
-            console.log("Error: you must be logged into write a story")
+            console.log("validate form passed")
+            let storyObj = Object.assign({}, state)
+            storyObj.category = []
+            for(let key in state.category){
+                if(state.category[key]){
+                    storyObj.category.push(key)
+                }
+            }
+            if(user.id){
+                storyObj.userId = props.user.id
+                console.log("storyObj:", storyObj, "state:",state)
+                if(mode == "edit"){
+                    axios.put(`/api/stories/${storyId}`, storyObj)
+                    .then(res => history.push(`/read/${res.data.id}`))
+                    .catch(err => setError({error:err, errorMessage:"Something went wrong please try again", show:true}))
+                }
+                else{
+                    axios.post('/api/stories', storyObj)
+                    .then(res => history.push(`/read/${res.data.id}`))
+                    .catch(err => setError({error:err, errorMessage:"Something went wrong please try again", show:true}))
+                }
+                
+            }
+            else{
+                setError({error:true, errorMessage:"You must be logged in to write a story", show:true})
+            }
         }
+        
 
     }
 
     const handleCancel = (e) =>{
         e.preventDefault()
-        history.push('/')
+        let urlStr
+        storyId ? urlStr = `/read/${storyId}` : urlStr = "/write"
+        history.push(urlStr)
     }
 
-//TO-DO: Validate Form
-
-    const validateForm = ()=> {
-        //to-do
-        //return valid or return error
-    }
 //#endregion
-    if(! props.user.id){
+    if(!user.id){
         return(
             <Container maxWidth="sm" className ={classes.root}>
                 <Typography component="h1" variant="h5">
@@ -173,17 +194,20 @@ function AddOrEditStory(props){
             
         )
     }
-    else  return(
+    return(
         <Container maxWidth="sm" className ={classes.root} >
+            
             <Typography component="h1" variant="h5">
                 {mode == "edit" ? "Edit Story Details": "Write a New Story"}
             </Typography>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} >
                 <TextField
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
+                error={state.title.length > 255}
+                helperText={`${state.title.length}/255 characters`}
                 id="title"
                 label="Title"
                 name="title"
@@ -236,6 +260,7 @@ function AddOrEditStory(props){
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
                 </FormControl>
+                {Boolean(err.error) && err.show ? <Alert severity="error" onClose={()=> setError({...err, show:false})} variant="filled">{err.errorMessage}</Alert> : null}
                 <FormControl className={classes.buttonGroup} >
                     <Button type="submit" className={classes.extraMargin} variant="contained" color="primary">Save</Button>
                     <Button className={classes.extraMargin} variant="contained" color="secondary" onClick={handleCancel}>Cancel</Button>

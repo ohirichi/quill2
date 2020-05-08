@@ -6,6 +6,7 @@ import history from '../history'
 import {Login} from './index'
 
 import {makeStyles, Typography, TextField, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button} from '@material-ui/core'
+import {Alert} from "@material-ui/lab"
 
 const useStyles = makeStyles((theme)=>({
     root:{
@@ -42,13 +43,21 @@ function AddOrEditChapter(props){
     
 
     //#region Form State
+    //error state
+    const [err, setError] = useState({
+        error:null,
+        errorMessage:"",
+        show:true
+    })
+    
+    //chapter Details
     const [chapterDetails, setChapterDetails] = useState({
         id:null,
         title:'Untitled',
         public:true,
         content:''
     })
-
+    //get Chapter Details if editing an existing chapter
     useEffect(()=>{
         if(chapterNum){
             axios.get(`/api/stories/${storyId}/chapters/${chapterNum}`)
@@ -61,7 +70,11 @@ function AddOrEditChapter(props){
                 }
                 setChapterDetails(chapDetailsObj)
             })
-            .catch(err => console.log("error: ", err))
+            .catch(err => setError({
+                error:err,
+                errorMessage:"Failed to retrieve chapter details, Please try again.",
+                show:true
+            }))
         }
     },[chapterNum, storyId])
 
@@ -78,46 +91,79 @@ function AddOrEditChapter(props){
         setChapterDetails({...chapterDetails, [e.target.name]:value})
     }
 
+    function validateForm(){
+        if(chapterDetails.title.length > 255 || !chapterDetails.title.length){
+            return false
+        }
+        if(!chapterDetails.content.length){
+            return false
+        }
+        return true
+    }
+
     const handleSubmit = async function(e){
         e.preventDefault();
-        let chapterObj = Object.assign({},chapterDetails)
-        chapterObj.storyId = storyId
-        console.log("submit clicked! chapterObj:", chapterObj)
-        if(mode !== "edit"){
-            try{
-                let res = await axios.post('/api/chapters',chapterObj)
-                let chapterId = res.data.id
-                console.log("success from server - new chap added:", res.data)
-                if(chapterId){
-                    history.push(`/read/${storyId}`)
-                }
-                else throw new Error("No ChapterId")
-            }
-            catch(err){
-                console.log("error:", err)
-            }
+        let valid = validateForm()
+        if(!valid){
+            setError({
+                error:{error:true},
+                errorMessage:"Please correct the errors on the form and then resubmit",
+                show:true
+            })
         }
         else{
-            try{
-                let res = await axios.put(`/api/chapters/${chapterDetails.id}`,chapterObj)
-                let chapterId = res.data.id
-                console.log("success from server - chapter updated:", res.data)
-                if(chapterId){
-                    history.push(`/read/${storyId}`)
+            let chapterObj = Object.assign({},chapterDetails)
+            chapterObj.storyId = storyId
+            console.log("submit clicked! chapterObj:", chapterObj)
+            if(mode !== "edit"){
+                try{
+                    let res = await axios.post('/api/chapters',chapterObj)
+                    let chapterId = res.data.id
+                    console.log("success from server - new chap added:", res.data)
+                    if(chapterId){
+                        history.push(`/read/${storyId}`)
+                    }
+                    else throw new Error("No ChapterId")
                 }
-                else throw new Error("No ChapterId")
+                catch(err){
+                    setError({
+                        error:err,
+                        errorMessage:"Failed to create new chapter. Please try again",
+                        show:true
+                    })
+                }
             }
-            catch(err){
-                console.log("error:", err)
-            } 
+            else{
+                try{
+                    let res = await axios.put(`/api/chapters/${chapterDetails.id}`,chapterObj)
+                    let chapterId = res.data.id
+                    console.log("success from server - chapter updated:", res.data)
+                    if(chapterId){
+                        history.push(`/read/${storyId}`)
+                    }
+                    else throw new Error("No ChapterId")
+                }
+                catch(err){
+                    setError({
+                        error:err,
+                        errorMessage:"Failed to update chapter. Please try again",
+                        show:true
+                    })
+                } 
+            }
         }
+        
         
 
     }
 
     const handleCancel = (e) =>{
         e.preventDefault()
-        history.push('/')
+        let urlStr = `/read/${storyId}`
+        if(chapterNum){
+            urlStr += `/${chapterNum}`
+        }
+        history.push(urlStr)
     }
     //#endregion
     if(! props.user.id){
@@ -146,6 +192,8 @@ function AddOrEditChapter(props){
                 label="Chapter Title"
                 name="title"
                 autoFocus
+                error={chapterDetails.title.length > 255}
+                helperText={`${chapterDetails.title.length}/255 characters`}
                 value={chapterDetails.title}
                 onChange={handleChange}
                 />
@@ -159,7 +207,7 @@ function AddOrEditChapter(props){
                 name="content"
                 autoFocus
                 multiline
-                rows='25'
+                rows='15'
                 value={chapterDetails.content}
                 onChange={handleChange}
                 />
@@ -175,6 +223,7 @@ function AddOrEditChapter(props){
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
                 </FormControl>
+                {Boolean(err.error) && err.show ? <Alert severity="error" variant="filled" onClose={()=> setError({...err, show:false})}>{err.errorMessage}</Alert> : null}
                 <FormControl className={`${classes.flexRow} ${classes.alignEnd}`} >
                         <Button className={classes.extraMargin} type="submit"  variant="contained" color="primary">Save</Button>
                         <Button className={classes.extraMargin} variant="contained" color="default" onClick={handleCancel}>Cancel</Button>

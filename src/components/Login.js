@@ -3,19 +3,9 @@ import {connect} from 'react-redux'
 import {auth} from '../store'
 
 //#region material ui components import
-
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import {makeStyles, Avatar, Button, TextField, Link, Grid, Typography, Container, FormControl, FormHelperText} from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+
 //#endregion
 
 //#region  Styles
@@ -46,6 +36,8 @@ const useStyles = makeStyles((theme) => ({
 function SignIn(props) {
   const [newUser, setNewUser] = useState(false)
   const classes = useStyles();
+  const {user} = props
+
 
   //toggle between form types - sign in vs register
   const switchForms = (e) => {
@@ -53,6 +45,13 @@ function SignIn(props) {
     setNewUser(!newUser)   
   }
   //To Do: Form Validation
+  let err = false
+  let errorMessage = ""
+  if(user.error){
+    err = true
+    errorMessage = "Invalid email and/or password. Please retry"
+  }
+
 
   //TO DO: Forgot PW?/Remember PW
   return (
@@ -64,7 +63,7 @@ function SignIn(props) {
         <Typography component="h1" variant="h5">
           {newUser ? "Register" : "Sign In" }
         </Typography>
-        <form onSubmit = {(e)=> props.handleSubmit(e, newUser)} className={classes.form} noValidate>
+        <form onSubmit = {(e)=> props.handleSubmit(e, newUser)} className={classes.form}>
             {newUser ? 
             <TextField
             variant="outlined"
@@ -84,6 +83,7 @@ function SignIn(props) {
             id="email"
             label="Email Address"
             name="email"
+            type="email"
             autoComplete="email"
             autoFocus
           />
@@ -102,6 +102,7 @@ function SignIn(props) {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           /> */}
+          {err ? <FormHelperText error={err}>{errorMessage}</FormHelperText> : null}
           <Button
             type="submit"
             fullWidth
@@ -130,7 +131,12 @@ function SignIn(props) {
 }
 //#endregion
 
-//#region  MapDispatch
+//#region  MapState and MapDispatch
+
+const mapState = state => ({
+  user:state.user
+})
+
 const mapDispatch = dispatch => {
   return {
     handleSubmit(e, newUser){
@@ -153,4 +159,4 @@ const mapDispatch = dispatch => {
 }
 //#endregion
 
-export default connect(null, mapDispatch)(SignIn)
+export default connect(mapState, mapDispatch)(SignIn)
