@@ -58,7 +58,7 @@ app.use('/auth', require('./auth'))
 app.use('/api', require('./api'))
 
 // static file-serving middleware
-app.use(express.static(path.join(__dirname, '..', 'build', 'public')))
+app.use(express.static(path.join(__dirname, '..', 'build')))
 
 // any remaining requests with an extension (.js, .css, etc.) send 404
 app.use((req, res, next) => {
