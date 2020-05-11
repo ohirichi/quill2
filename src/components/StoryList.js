@@ -42,7 +42,7 @@ export default function StoryList(props){
                 title={story.title}
                 >
                     <CardHeader 
-                    title={story.title.length > 20 ? story.title.substring(0,18) + "..." : story.title} 
+                    title={story.title.length > 20 ? story.title.substring(0,15) + "..." : story.title} 
                     subheader={story.user.username}
                     />
                     <CardMedia 
