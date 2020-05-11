@@ -73,7 +73,7 @@ if (path.extname(req.path).length) {
 
 // sends index.html
 app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'build', 'public/index.html'))
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'))
 })
 
 // error handling endware
