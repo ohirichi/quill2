@@ -5,7 +5,7 @@ import {useParams} from 'react-router-dom'
 import history from '../history'
 import {Login} from './index'
 
-import {makeStyles, Typography, TextField, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button} from '@material-ui/core'
+import {makeStyles, Dialog, DialogActions, DialogContent, Typography, TextField, Container, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Button, FormHelperText} from '@material-ui/core'
 import {Alert} from "@material-ui/lab"
 
 const useStyles = makeStyles((theme)=>({
@@ -13,6 +13,21 @@ const useStyles = makeStyles((theme)=>({
         paddingTop: theme.spacing(4)
     }
     ,
+    deleteSection:{
+        display:"flex",
+        flexDirection: "column",
+        alignItems:"start",
+        justifyContent:"start",
+        border:"1px solid gray",
+        borderRadius:"5px",
+        padding: "1em",
+        marginBottom:"1em",
+        "& *":{
+            marginBottom: ".5em"
+        }
+
+    },
+
     flexRow:{
         display:"flex",
         flexDirection:"row",
@@ -28,7 +43,8 @@ const useStyles = makeStyles((theme)=>({
     },
 
     extraMargin:{
-        margin: "0.5rem"
+        margin: "0.5rem",
+        marginRight:"0"
     }
 }))
 
@@ -89,6 +105,8 @@ function AddOrEditChapter(props){
         }
     },[chapterNum, storyId])
 
+    //Confirmation Dialog state
+    const [open, setOpen] = useState(false)
 
     //#endregion
 
@@ -162,6 +180,21 @@ function AddOrEditChapter(props){
         }
     }
 
+    const handleDelete = (e) =>{
+        e.preventDefault()
+        axios.delete(`/api/chapters/${chapterDetails.id}`)
+        .then(res => history.push(`/read/${storyId}`))
+        .catch(err => console.log("error:", err))
+
+    }
+
+    const handleOpen = function(e){
+        setOpen(true)
+    }
+    const handleClose = function(e){
+        setOpen(false)
+    }
+
     const handleCancel = (e) =>{
         e.preventDefault()
         let urlStr = `/read/${storyId}`
@@ -171,19 +204,20 @@ function AddOrEditChapter(props){
         history.push(urlStr)
     }
     //#endregion
-    if(! props.user.id || !isAuthor){
-        let message = "You must be logged in write or edit chapters!"
-        if (!isAuthor) message = "You do not have permission to edit this chapter"
-        return(
-            <Container maxWidth="sm" className ={classes.root}>
-                <Typography component="h1" variant="h5">
-                {message}
-                </Typography>
-                {isAuthor ? <Login/> : null}
-            </Container>          
-        )
-    }
-    else return(
+    // if(! props.user.id || !isAuthor){
+    //     let message = "You must be logged in write or edit chapters!"
+    //     if (!isAuthor) message = "You do not have permission to edit this chapter"
+    //     return(
+    //         <Container maxWidth="sm" className ={classes.root}>
+    //             <Typography component="h1" variant="h5">
+    //             {message}
+    //             </Typography>
+    //             {isAuthor ? <Login/> : null}
+    //         </Container>          
+    //     )
+    // }
+    // else 
+    return(
         <Container className={classes.root} >
             <Typography variant="h6">
                 {mode === "edit" ? "Edit Chapter" :"Add New Chapter"}
@@ -229,6 +263,23 @@ function AddOrEditChapter(props){
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
                 </FormControl>
+                <div >
+                    <FormControl className={classes.deleteSection}>
+                        <FormLabel>Delete Chapter</FormLabel>
+                        <FormHelperText>Do you wish to delete the chapter? This cannot be undone later.</FormHelperText>
+                        <Button onClick={handleOpen}  variant="contained" color="default">Delete Chapter</Button>
+                    </FormControl> 
+                    <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    >
+                        <DialogContent>Please confirm if you want to delete this chapter.</DialogContent>
+                        <DialogActions>
+                        <Button autoFocus onClick={handleDelete} color="secondary">Delete</Button>
+                            <Button onClick={handleClose} color="default">Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
                 {Boolean(err.error) && err.show ? <Alert severity="error" variant="filled" onClose={()=> setError({...err, show:false})}>{err.errorMessage}</Alert> : null}
                 <FormControl className={`${classes.flexRow} ${classes.alignEnd}`} >
                         <Button className={classes.extraMargin} type="submit"  variant="contained" color="primary">Save</Button>
