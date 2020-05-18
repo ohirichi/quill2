@@ -263,7 +263,7 @@ function AddOrEditChapter(props){
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
                 </FormControl>
-                <div >
+                {mode === "edit" ? <div>
                     <FormControl className={classes.deleteSection}>
                         <FormLabel>Delete Chapter</FormLabel>
                         <FormHelperText>Do you wish to delete the chapter? This cannot be undone later.</FormHelperText>
@@ -279,7 +279,7 @@ function AddOrEditChapter(props){
                             <Button onClick={handleClose} color="default">Cancel</Button>
                         </DialogActions>
                     </Dialog>
-                </div>
+                </div> : null}
                 {Boolean(err.error) && err.show ? <Alert severity="error" variant="filled" onClose={()=> setError({...err, show:false})}>{err.errorMessage}</Alert> : null}
                 <FormControl className={`${classes.flexRow} ${classes.alignEnd}`} >
                         <Button className={classes.extraMargin} type="submit"  variant="contained" color="primary">Save</Button>

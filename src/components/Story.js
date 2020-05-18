@@ -64,7 +64,15 @@ function Story(props){
     const isAuthor = story.userId === props.user.id
     useEffect(()=>{
         axios.get(`/api/stories/${storyId}`)
-        .then(res => setStory(res.data))
+        .then(res => {
+            if(!res.data){
+                history.push("/404")
+            }
+            else{
+                setStory(res.data)
+            }
+            
+        })
         .catch(err => {
             console.log("error:", err)
             history.push("/")

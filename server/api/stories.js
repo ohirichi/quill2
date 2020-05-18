@@ -53,7 +53,10 @@ router.put('/:id', (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-  Story.destroy({ where: {id: req.params.id}})
-    .then(() => res.sendStatus(204))
-    .catch(next)
+  Chapter.destroy({where:{ storyId: req.params.id}})
+  .then( ()=> {
+    Story.destroy({ where: {id: req.params.id}})
+  })
+  .then(() => res.sendStatus(204))
+  .catch(next)
 })

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
+import history from "../history"
 import {connect} from 'react-redux'
 import {useParams, Link as RouterLink} from 'react-router-dom'
 import { makeStyles, Container, Divider, Button, Breadcrumbs, Link, Typography} from '@material-ui/core';
@@ -43,7 +44,14 @@ function Chapter(props){
     useEffect(()=>{
         axios.get(`/api/stories/${storyId}/chapters`)
         .then(res => {
-            setChapters(res.data)
+            //TO DO: CREATE 404 PAGE
+            if(!res.data.length){
+                history.push("/404")
+            }
+            else{
+                setChapters(res.data)
+            }
+            
         })
         .catch(err => console.log("error:", err))
     },[storyId])

@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {useParams} from 'react-router-dom'
 import axios from 'axios'
 import history from '../history'
-import { makeStyles, Container, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormGroup, Checkbox } from '@material-ui/core';
+import { makeStyles, Container, Dialog, DialogActions, DialogContent, Button, Typography, TextField, FormLabel, RadioGroup, Radio, FormControlLabel, FormControl, FormHelperText, FormGroup, Checkbox } from '@material-ui/core';
 import {Alert} from "@material-ui/lab"
 
 import {Login} from "./index"
@@ -14,7 +14,20 @@ const useStyles = makeStyles((theme) => ({
     root:{
         paddingTop: theme.spacing(4)
     },
+    deleteSection:{
+        display:"flex",
+        flexDirection: "column",
+        alignItems:"start",
+        justifyContent:"start",
+        border:"1px solid gray",
+        borderRadius:"5px",
+        padding: "1em",
+        marginBottom:"1em",
+        "& *":{
+            marginBottom: ".5em"
+        }
 
+    },
     inputGroup: {
       display: 'flex',
       flexDirection:'row',
@@ -48,6 +61,11 @@ function AddOrEditStory(props){
     }
 
 //#region Form State
+
+    //Confirmation Dialog state
+    const [open, setOpen] = useState(false)
+
+
     const defaultCategories = {
         romance:false,
         historical:false,
@@ -135,6 +153,20 @@ function AddOrEditStory(props){
         }
         return true
     }
+    const handleDelete = (e) =>{
+        e.preventDefault()
+        axios.delete(`/api/stories/${storyId}`)
+        .then(res => history.push(`/write`))
+        .catch(err => console.log("error:", err))
+
+    }
+
+    const handleOpen = function(e){
+        setOpen(true)
+    }
+    const handleClose = function(e){
+        setOpen(false)
+    }
 
     const handleSubmit = (e)=>{
         e.preventDefault()
@@ -181,19 +213,19 @@ function AddOrEditStory(props){
 
 //#endregion
     //checking that user is logged in and is the author of the story to edit it
-    if(!user.id || !isAuthor){
-        let message = "You must be logged in write or edit stories!"
-        if (!isAuthor) message = "You do not have permission to edit this story"
-        return(
-            <Container maxWidth="sm" className ={classes.root}>
-                <Typography component="h1" variant="h5">
-                {message}
-                </Typography>
-                <Login/>
-            </Container>
+    // if(!user.id || !isAuthor){
+    //     let message = "You must be logged in write or edit stories!"
+    //     if (!isAuthor) message = "You do not have permission to edit this story"
+    //     return(
+    //         <Container maxWidth="sm" className ={classes.root}>
+    //             <Typography component="h1" variant="h5">
+    //             {message}
+    //             </Typography>
+    //             <Login/>
+    //         </Container>
             
-        )
-    }
+    //     )
+    // }
     return(
         <Container maxWidth="sm" className ={classes.root} >
             
@@ -260,6 +292,23 @@ function AddOrEditStory(props){
                         <FormControlLabel value={false} control={<Radio />} label="Private" />
                     </RadioGroup>
                 </FormControl>
+                {mode === "edit" ? <div >
+                    <FormControl className={classes.deleteSection}>
+                        <FormLabel>Delete Story</FormLabel>
+                        <FormHelperText>Do you wish to delete the chapter? This cannot be undone later and will delete all the chapters associated with this story as well.</FormHelperText>
+                        <Button onClick={handleOpen}  variant="contained" color="default">Delete Story</Button>
+                    </FormControl> 
+                    <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    >
+                        <DialogContent>Please confirm if you want to delete this story and all of its chapters.</DialogContent>
+                        <DialogActions>
+                        <Button autoFocus onClick={handleDelete} color="secondary">Delete</Button>
+                            <Button onClick={handleClose} color="default">Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>: null}
                 {Boolean(err.error) && err.show ? <Alert severity="error" onClose={()=> setError({...err, show:false})} variant="filled">{err.errorMessage}</Alert> : null}
                 <FormControl className={classes.buttonGroup} >
                     <Button type="submit" className={classes.extraMargin} variant="contained" color="primary">Save</Button>
