@@ -10,5 +10,6 @@ export {default as Read} from "./Read"
 export {default as StoryList} from "./StoryList"
 export {default as Write} from "./Write"
 export {default as Footer} from "./Footer"
+export {default as FourOhFour} from "./FourOhFour"
 
 

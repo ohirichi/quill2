@@ -44,7 +44,6 @@ function Chapter(props){
     useEffect(()=>{
         axios.get(`/api/stories/${storyId}/chapters`)
         .then(res => {
-            //TO DO: CREATE 404 PAGE
             if(!res.data.length){
                 history.push("/404")
             }

@@ -89,13 +89,18 @@ function AddOrEditChapter(props){
         if(chapterNum){
             axios.get(`/api/stories/${storyId}/chapters/${chapterNum}`)
             .then(res => {
-                const chapDetailsObj = {
-                    id: res.data.id,
-                    title:res.data.title,
-                    public: res.data.public,
-                    content: res.data.content
+                if(res.data){
+                    const chapDetailsObj = {
+                        id: res.data.id,
+                        title:res.data.title,
+                        public: res.data.public,
+                        content: res.data.content
+                    }
+                    setChapterDetails(chapDetailsObj)
                 }
-                setChapterDetails(chapDetailsObj)
+                else{
+                    history.push("/404")
+                }
             })
             .catch(err => setError({
                 error:err,
@@ -204,18 +209,18 @@ function AddOrEditChapter(props){
         history.push(urlStr)
     }
     //#endregion
-    // if(! props.user.id || !isAuthor){
-    //     let message = "You must be logged in write or edit chapters!"
-    //     if (!isAuthor) message = "You do not have permission to edit this chapter"
-    //     return(
-    //         <Container maxWidth="sm" className ={classes.root}>
-    //             <Typography component="h1" variant="h5">
-    //             {message}
-    //             </Typography>
-    //             {isAuthor ? <Login/> : null}
-    //         </Container>          
-    //     )
-    // }
+    if(! props.user.id || !isAuthor){
+        let message = "You must be logged in write or edit chapters!"
+        if (!isAuthor) message = "You do not have permission to edit this chapter"
+        return(
+            <Container maxWidth="sm" className ={classes.root}>
+                <Typography component="h1" variant="h5">
+                {message}
+                </Typography>
+                {isAuthor ? <Login/> : null}
+            </Container>          
+        )
+    }
     // else 
     return(
         <Container className={classes.root} >

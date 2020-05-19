@@ -98,26 +98,32 @@ function AddOrEditStory(props){
             .then(res => {
                 const story = res.data
                 const newState= {}
-                for(let key in story){
-                    newState[key] = story[key]
+                if(res.data){
+                    for(let key in story){
+                        newState[key] = story[key]
+                    }
+    
+                    const newCats = {
+                        romance:false,
+                        historical:false,
+                        fantasy:false,
+                        sciFi:false,
+                        fiction:false,
+                        adventure:false,
+                        mystery:false,
+                        horror:false,
+                        sport:false
+                    }
+                    story.category.forEach(cat => {
+                        newCats[cat] = true
+                    })
+                    newState.category = newCats
+                    setState(newState)
                 }
-
-                const newCats = {
-                    romance:false,
-                    historical:false,
-                    fantasy:false,
-                    sciFi:false,
-                    fiction:false,
-                    adventure:false,
-                    mystery:false,
-                    horror:false,
-                    sport:false
+                else{
+                    history.push('/404')
                 }
-                story.category.forEach(cat => {
-                    newCats[cat] = true
-                })
-                newState.category = newCats
-                setState(newState)
+                
             })
             .catch(err => setError({error: true, errorMessage:err}))
         }       
@@ -212,20 +218,20 @@ function AddOrEditStory(props){
     }
 
 //#endregion
-    //checking that user is logged in and is the author of the story to edit it
-    // if(!user.id || !isAuthor){
-    //     let message = "You must be logged in write or edit stories!"
-    //     if (!isAuthor) message = "You do not have permission to edit this story"
-    //     return(
-    //         <Container maxWidth="sm" className ={classes.root}>
-    //             <Typography component="h1" variant="h5">
-    //             {message}
-    //             </Typography>
-    //             <Login/>
-    //         </Container>
+//checking that user is logged in and is the author of the story to edit it
+    if(!user.id || !isAuthor){
+        let message = "You must be logged in write or edit stories!"
+        if (!isAuthor) message = "You do not have permission to edit this story"
+        return(
+            <Container maxWidth="sm" className ={classes.root}>
+                <Typography component="h1" variant="h5">
+                {message}
+                </Typography>
+                <Login/>
+            </Container>
             
-    //     )
-    // }
+        )
+    }
     return(
         <Container maxWidth="sm" className ={classes.root} >
             
